@@ -9,10 +9,10 @@ const fs = require("fs");
 
 // Database connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'earist',
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "earist_hris",
 });
 
 router.post("/upload_vocational", uploads.single("file"), async (req, res) => {
@@ -41,31 +41,16 @@ router.post("/upload_vocational", uploads.single("file"), async (req, res) => {
       const vocationalHighestAttained = row.vocationalHighestAttained;
       const vocationalYearGraduated = row.vocationalYearGraduated;
 
-      const sql =
-        "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
+      const sql = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
       return new Promise((resolve, reject) => {
-        db.query(
-          sql,
-          [
-            vocationalNameOfSchool,
-            vocationalDegree,
-            vocationalPeriodFrom,
-            vocationalPeriodTo,
-            vocationalHighestAttained,
-            vocationalYearGraduated,
-          ],
-          (err) => {
-            if (err) {
-              console.error("Error inserting data:", err);
-              return reject(err);
-            }
-            console.log(
-              "Data inserted successfully for:",
-              vocationalNameOfSchool
-            );
-            resolve();
+        db.query(sql, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated], (err) => {
+          if (err) {
+            console.error("Error inserting data:", err);
+            return reject(err);
           }
-        );
+          console.log("Data inserted successfully for:", vocationalNameOfSchool);
+          resolve();
+        });
       });
     });
 
@@ -107,69 +92,28 @@ router.get("/vocational_table", (req, res) => {
 });
 
 router.post("/vocational_table", (req, res) => {
-  const {
-    vocationalNameOfSchool,
-    vocationalDegree,
-    vocationalPeriodFrom,
-    vocationalPeriodTo,
-    vocationalHighestAttained,
-    vocationalYearGraduated,
-  } = req.body;
-  const query =
-    "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(
-    query,
-    [
-      vocationalNameOfSchool,
-      vocationalDegree,
-      vocationalPeriodFrom,
-      vocationalPeriodTo,
-      vocationalHighestAttained,
-      vocationalYearGraduated,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).send("Internal Server Error");
-      }
-      res
-        .status(201)
-        .send({ message: "Vocational record created", id: result.insertId });
+  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated } = req.body;
+  const query = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).send("Internal Server Error");
     }
-  );
+    res.status(201).send({ message: "Vocational record created", id: result.insertId });
+  });
 });
 
 router.put("/vocational_table/:id", (req, res) => {
   const { id } = req.params;
-  const {
-    vocationalNameOfSchool,
-    vocationalDegree,
-    vocationalPeriodFrom,
-    vocationalPeriodTo,
-    vocationalHighestAttained,
-    vocationalYearGraduated,
-  } = req.body;
-  const query =
-    "UPDATE vocational_table SET vocationalNameOfSchool = ?, vocationalDegree = ?, vocationalPeriodFrom = ?, vocationalPeriodTo = ?, vocationalHighestAttained = ?, vocationalYearGraduated = ? WHERE id = ?";
-  db.query(
-    query,
-    [
-      vocationalNameOfSchool,
-      vocationalDegree,
-      vocationalPeriodFrom,
-      vocationalPeriodTo,
-      vocationalHighestAttained,
-      vocationalYearGraduated,
-      id,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).send("Internal Server Error");
-      }
-      res.status(200).send({ message: "Vocational record updated" });
+  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated } = req.body;
+  const query = "UPDATE vocational_table SET vocationalNameOfSchool = ?, vocationalDegree = ?, vocationalPeriodFrom = ?, vocationalPeriodTo = ?, vocationalHighestAttained = ?, vocationalYearGraduated = ? WHERE id = ?";
+  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, id], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).send("Internal Server Error");
     }
-  );
+    res.status(200).send({ message: "Vocational record updated" });
+  });
 });
 
 router.delete("/vocational_table/:id", (req, res) => {

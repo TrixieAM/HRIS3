@@ -24,7 +24,7 @@ const Login = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    if (!formData.employeeNumber || !formData.email || !formData.password) {
+    if (!formData.email || !formData.password) {
       setErrorMessage("Please fill all asked credentials");
       return;
     }

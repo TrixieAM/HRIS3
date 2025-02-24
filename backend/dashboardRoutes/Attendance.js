@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router()
-const mysql = require('mysql2')
+const express = require("express");
+const router = express.Router();
+const mysql = require("mysql2");
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'earist',
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "earist_hris",
 });
 
 // Endpoint to fetch attendance records
@@ -298,7 +298,7 @@ router.get("/api/dtr", (req, res) => {
 });
 
 router.post("/api/overall_attendance", (req, res) => {
-  const {employeeNumber, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, totalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime} = req.body;
+  const { employeeNumber, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, totalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime } = req.body;
 
   const query = `
     INSERT INTO overall_attendance_record (
@@ -319,55 +319,31 @@ router.post("/api/overall_attendance", (req, res) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(
-    query,
-    [
-      employeeNumber,
-      startDate,
-      endDate,
-      totalRenderedTimeMorning,
-      totalTardAM,
-      totalRenderedTimeAfternoon,
-      totalTardPM,
-      totalRenderedHonorarium,
-      totalTardHR,
-      totalRenderedServiceCredit,
-      totalTardSC,
-      totalRenderedOvertime,
-      totalTardOT,
-      overallRenderedTime,
-    ],
-    (error, results) => {
-      if (error) {
-        console.error('Error inserting data:', error);
-        return res.status(500).json({ message: 'Database error', error });
-      }
-      res.status(201).json({ message: 'Attendance record saved successfully', data: results });
+  db.query(query, [employeeNumber, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, totalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime], (error, results) => {
+    if (error) {
+      console.error("Error inserting data:", error);
+      return res.status(500).json({ message: "Database error", error });
     }
-  );
-})
+    res.status(201).json({ message: "Attendance record saved successfully", data: results });
+  });
+});
 
-router.get("/api/overall_attendance_record", (req,res) => {
-  const {personID, startDate, endDate} = req.query;
+router.get("/api/overall_attendance_record", (req, res) => {
+  const { personID, startDate, endDate } = req.query;
   console.log("Received parameters:", { personID, startDate, endDate });
-  const query = 'SELECT * FROM overall_attendance_record WHERE personID = ? AND startDate >= ? AND endDate <= ?'
+  const query = "SELECT * FROM overall_attendance_record WHERE personID = ? AND startDate >= ? AND endDate <= ?";
 
-  db.query(query,[personID, startDate, endDate],(error, results) => {
-      if (error) {
-        console.error('Error Fetching data:', error);
-        return res.status(500).json({ message: 'Database error', error });
-      }
-      res.status(200).json({ message: 'Overall attendance record fetch successfully', data: results });
+  db.query(query, [personID, startDate, endDate], (error, results) => {
+    if (error) {
+      console.error("Error Fetching data:", error);
+      return res.status(500).json({ message: "Database error", error });
     }
-  );
-}) 
+    res.status(200).json({ message: "Overall attendance record fetch successfully", data: results });
+  });
+});
 
 router.put("/api/overall_attendance_record/:id", (req, res) => {
-  const {
-    personID, startDate, endDate, totalRenderedTimeMorning, totalTardAM,
-    totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, TotalTardHR,
-    totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime
-  } = req.body;
+  const { personID, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, TotalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime } = req.body;
 
   const { id } = req.params;
 
@@ -382,28 +358,21 @@ router.put("/api/overall_attendance_record/:id", (req, res) => {
     WHERE id = ?;
   `;
 
-  db.query(query, 
-    [personID, startDate, endDate, totalRenderedTimeMorning, totalTardAM,
-    totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, TotalTardHR,
-    totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime, id], 
-    (error, results) => {
-      if (error) return res.status(500).json({ message: 'Database error', error });
-      res.status(200).json({ message: 'Record updated successfully', data: results });
-    }
-  );
+  db.query(query, [personID, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, TotalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime, id], (error, results) => {
+    if (error) return res.status(500).json({ message: "Database error", error });
+    res.status(200).json({ message: "Record updated successfully", data: results });
+  });
 });
 
-
 router.delete("/api/overall_attendance_record/:id", (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
-  const query = 'DELETE FROM overall_attendance_record WHERE id = ?';
+  const query = "DELETE FROM overall_attendance_record WHERE id = ?";
 
   db.query(query, [id], (err, result) => {
-    if (err) return res.status(500).send({ message: 'Internal Server Error' });
-    res.status(200).send({ message: 'Attendance entry deleted' });
+    if (err) return res.status(500).send({ message: "Internal Server Error" });
+    res.status(200).send({ message: "Attendance entry deleted" });
   });
-  
 });
 
 module.exports = router;
