@@ -26,6 +26,7 @@ import DailyTimeRecordFaculty from "./components/DailyTimeRecordFaculty";
 import AttendanceForm from "./components/AllAttendanceRecord";
 import AttendanceSearch from "./components/ViewAttendance";
 import AttendanceModule from "./components/AttendanceModule";
+import AttendanceModuleFaculty from "./components/AttendanceModuleFaculty";
 import OverallAttendancePage from "./components/OverallAttendance";
 import PDS1 from "./components/PDS1";
 import PDS2 from "./components/PDS2";
@@ -292,7 +293,17 @@ function App() {
                     <ListItemIcon sx={{ marginRight: "-1rem" }}>
                       <BadgeRounded />
                     </ListItemIcon>
-                    <ListItemText primary="Attendance Module" />
+                    <ListItemText primary="Attendance Module Non-teaching Staff" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <Collapse in={open2} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding sx={{ pl: 4 }}>
+                  <ListItem button component={Link} to="/attendance_module_faculty" sx={{ color: "black" }}>
+                    <ListItemIcon sx={{ marginRight: "-1rem" }}>
+                      <BadgeRounded />
+                    </ListItemIcon>
+                    <ListItemText primary="Attendance Module Faculty" />
                   </ListItem>
                 </List>
               </Collapse>
@@ -491,6 +502,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
                     <AttendanceModule />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/attendance_module_faculty"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <AttendanceModuleFaculty />
                   </ProtectedRoute>
                 }
               />
