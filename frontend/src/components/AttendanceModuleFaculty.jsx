@@ -128,6 +128,11 @@ const AttendanceModuleFaculty = () => {
         const timeDifferenceAM = calculateAdjustedTimeDifference(OfficialTimeMorning, OfficialBreakAM);
         const timeDifferencePM = calculateAdjustedTimeDifference(OfficialBreakPM, OfficialTimeAfternoon);
 
+        const timeDifferenceFaculty = calculateAdjustedTimeDifference(OfficialTimeMorning, OfficialTimeAfternoon);
+
+        const tardtimeDifferenceFaculty1 = calculateTimeDifference(OfficialTimeMorning, tardBreakIN);
+        const tardtimeDifferenceFaculty2 = calculateTimeDifference(OfficialTimeAfternoon, tardTimeOut);
+
         const tardtimeDifferenceAM1 = calculateTimeDifference(OfficialBreakAM, tardBreakIN);
         const tardtimeDifferenceAM2 = calculateTimeDifference(tardTimeIN, OfficialTimeMorning);
 
@@ -183,13 +188,15 @@ const AttendanceModuleFaculty = () => {
         const maxRenderedTimeAM = calculateTimeDifference(theOfficialTimeIN, theOfficialBreaktimeIN);
         const maxRenderedTimePM = calculateTimeDifference(theOfficialBreaktimeOUT, theOfficialTimeOUT);
 
+        const maxRenderedFaculty = calculateTimeDifference(theOfficialTimeIN, theOfficialTimeOUT);
+
         const maxRenderedTimeHN = calculateTimeDifference(theOfficialHonorariumTimeIN, theOfficialHonorariumTimeOUT);
         const maxRenderedTimeSC = calculateTimeDifference(theOfficialServiceCreditTimeIN, theOfficialServiceCreditTimeOUT);
 
         const maxRenderedTimeOT = calculateTimeDifference(theOfficialOverTimeIN, theOfficialOverTimeOUT);
 
         const tardAM = addTimeStrings(tardtimeDifferenceAM1, tardtimeDifferenceAM2);
-
+        const tardFaculty = addTimeStrings(tardtimeDifferenceFaculty1, tardtimeDifferenceFaculty2);
         const tardPM = addTimeStrings(tardtimeDifferencePM1, tardtimeDifferencePM2);
         const tardHN = addTimeStrings(tardtimeDifferenceHN1, tardtimeDifferenceHN2);
         const tardSC = addTimeStrings(tardtimeDifferenceSC1, tardtimeDifferenceSC2);
@@ -199,10 +206,67 @@ const AttendanceModuleFaculty = () => {
 
         const tardPMFinal = maxRenderedTimePM < tardPM ? "00:00:00" : tardPM;
 
+        const tardFacultyFinal = maxRenderedFaculty > tardFaculty ? maxRenderedFaculty : tardFaculty;
+
         const tardHNFinal = maxRenderedTimeHN < tardHN ? "00:00:00" : tardHN;
         const tardSCFinal = maxRenderedTimeSC < tardSC ? "00:00:00" : tardSC;
 
         const tardOTFinal = maxRenderedTimeOT < tardOT ? "00:00:00" : tardOT;
+
+        // start faculty render
+
+        // rendered time
+        // Convert time strings to Date objects
+        const startDateFaculty = new Date(`01/01/2000 ${timeIN}`);
+        const endDateFaculty = new Date(`01/01/2000 ${timeOUT}`);
+        const startOfficialTimeFaculty = new Date(`01/01/2000 ${officialTimeIN}`);
+        const endOfficialTimeFaculty = new Date(`01/01/2000 ${officialTimeOUT}`);
+        const defaultTimeFaculty = "00:00:00 AM";
+        const midnightFaculty = new Date(`01/01/2000 ${defaultTimeFaculty}`);
+
+        const timeinfaculty = startDateFaculty > endOfficialTimeFaculty ? midnightFaculty : endOfficialTimeFaculty;
+        const timeoutfaculty = timeinfaculty === midnightFaculty ? midnightFaculty : endDateFaculty > endOfficialTimeFaculty ? endOfficialTimeFaculty : endDateFaculty;
+
+        // Calculate difference in milliseconds
+        const diffMs = timeinfaculty - timeoutfaculty;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFaculty = Math.floor(diffMs / (1000 * 60 * 60));
+        const minutesFaculty = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFaculty = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedFacultyRenderedTime = [String(hoursFaculty).padStart(2, "0"), String(minutesFaculty).padStart(2, "0"), String(secondsFaculty).padStart(2, "0")].join(":");
+
+        //end rendered time
+
+        //  max rendered time
+
+        // Calculate difference in milliseconds
+        const diffMsFaculty = endOfficialTimeFaculty - startOfficialTimeFaculty;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyMRT = Math.floor(diffMsFaculty / (1000 * 60 * 60));
+        const minutesFacultyMRT = Math.floor((diffMsFaculty % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyMRT = Math.floor((diffMsFaculty % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedFacultyMaxRenderedTime = [String(hoursFacultyMRT).padStart(2, "0"), String(minutesFacultyMRT).padStart(2, "0"), String(secondsFacultyMRT).padStart(2, "0")].join(":");
+
+        const tardFinalformattedFacultyRenderedTime = new Date(`01/01/2000 ${formattedFacultyRenderedTime}`);
+        const tardFinalformattedFacultyMaxRenderedTime = new Date(`01/01/2000 ${formattedFacultyMaxRenderedTime}`);
+
+        const finalcalcFaculty = tardFinalformattedFacultyMaxRenderedTime - tardFinalformattedFacultyRenderedTime;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursfinalcalcFaculty = Math.floor(finalcalcFaculty / (1000 * 60 * 60));
+        const minutesfinalcalcFaculty = Math.floor((finalcalcFaculty % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsfinalcalcFaculty = Math.floor((finalcalcFaculty % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedfinalcalcFaculty = [String(hoursfinalcalcFaculty).padStart(2, "0"), String(minutesfinalcalcFaculty).padStart(2, "0"), String(secondsfinalcalcFaculty).padStart(2, "0")].join(":");
+
+        // // end max rendered time
 
         return {
           ...row,
@@ -241,6 +305,15 @@ const AttendanceModuleFaculty = () => {
           tardSCFinal,
           tardOTFinal,
           tardtimeDifferenceHN1,
+          timeDifferenceFaculty,
+          tardFacultyFinal,
+          tardFaculty,
+          tardtimeDifferenceFaculty1,
+          formattedFacultyRenderedTime,
+          formattedFacultyMaxRenderedTime,
+          midnightFaculty,
+          formattedfinalcalcFaculty,
+          finalcalcFaculty,
         };
       });
 
@@ -369,7 +442,6 @@ const AttendanceModuleFaculty = () => {
     const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardOTFinal), 0);
     return secondsToTimeSaved(totalSeconds);
   };
-
 
   const calculateTotalTimeOTSaved = () => {
     const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
@@ -559,32 +631,20 @@ const AttendanceModuleFaculty = () => {
               required
               sx={{ width: "250px", marginLeft: "10px" }}
             />
-            <Button
-              sx={{ width: "200px", height: "55px", marginLeft: "10px" }}
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
+            <Button sx={{ width: "200px", height: "55px", marginLeft: "10px" }} type="submit" variant="contained" color="primary" fullWidth>
               Generate Report
             </Button>
           </Box>
 
-
           {attendanceData.length > 0 && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={downloadExcel}
-              sx={{ mb: 2 }}
-            >
+            <Button variant="contained" color="primary" onClick={downloadExcel} sx={{ mb: 2 }}>
               Download Excel for Users
             </Button>
           )}
         </form>
 
         {attendanceData.length > 0 && (
-          <TableContainer component={Paper} sx={{ mt: 4 }} style={{marginBottom: '5%'}}>
+          <TableContainer component={Paper} sx={{ mt: 4 }} style={{ marginBottom: "5%" }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -655,55 +715,8 @@ const AttendanceModuleFaculty = () => {
                       whiteSpace: "nowrap", // Optional: prevents text wrapping
                     }}
                   >
-                    Breaktime IN
+                    Time OUT
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "#edfba6",
-                      fontWeight: "bold",
-                      width: "100px",
-                      textAlign: "center",
-                    }}
-                  >
-                    Official Breaktime IN
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "#bafac6",
-                      fontWeight: "bold",
-                      width: "100px",
-                      textAlign: "center",
-                    }}
-                  >
-                    Official Time (MORNING) Rendered Time
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      backgroundColor: "#ffd2d2",
-                      fontWeight: "bold",
-                      width: "100px",
-                      textAlign: "center",
-                    }}
-                  >
-                    Tardiness (MORNING) 
-                  </TableCell>
-
-                  
-
-
-                  <TableCell>Breaktime OUT</TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "#edfba6",
-                      fontWeight: "bold",
-                      width: "100px",
-                      textAlign: "center",
-                    }}
-                  >
-                    Official Breaktime OUT
-                  </TableCell>
-                  <TableCell>Time OUT</TableCell>
                   <TableCell
                     sx={{
                       backgroundColor: "#edfba6",
@@ -722,7 +735,7 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                    Official Time (AFTERNOON) Rendered Time
+                    Official Regular Duty Rendered Time
                   </TableCell>
 
                   <TableCell
@@ -733,7 +746,7 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                  TARDINESS (AFTERNOON) 
+                    Tardiness (Official Regular Duty)
                   </TableCell>
 
                   <TableCell>Honorarium Time IN</TableCell>
@@ -745,7 +758,6 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                    
                     OFFICIAL Honorarium Time IN
                   </TableCell>
                   <TableCell>Honorarium Time OUT</TableCell>
@@ -777,7 +789,7 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                  TARDINESS (HONORARIUM) 
+                    TARDINESS (HONORARIUM)
                   </TableCell>
 
                   <TableCell>Service Credit Time IN</TableCell>
@@ -820,7 +832,7 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                  TARDINESS (SERVICE CREDIT) 
+                    TARDINESS (SERVICE CREDIT)
                   </TableCell>
 
                   <TableCell>Overtime Time IN</TableCell>
@@ -863,9 +875,8 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                     }}
                   >
-                  TARDINESS (OVERTIME) 
+                    TARDINESS (OVERTIME)
                   </TableCell>
-
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -906,56 +917,12 @@ const AttendanceModuleFaculty = () => {
                     >
                       {row.officialTimeIN}
                     </TableCell>
-                    <TableCell>{row.breaktimeIN}</TableCell>
-                    <TableCell
-                      sx={{
-                        backgroundColor: "#edfba6",
-                        fontWeight: "bold",
-                        width: "120px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {row.officialBreaktimeIN}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        backgroundColor: "#bafac6",
-                        fontWeight: "bold",
-                        width: "100px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {row.timeDifferenceAM}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        backgroundColor: "#ffd2d2",
-                        fontWeight: "bold",
-                        width: "100px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {row.tardAM}
-                    </TableCell>
-                    
-
-                    <TableCell>{row.OfficialBreakPM}</TableCell>
-                    <TableCell
-                      sx={{
-                        backgroundColor: "#edfba6",
-                        fontWeight: "bold",
-                        width: "100px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {row.officialBreaktimeOUT}
-                    </TableCell>
                     <TableCell>{row.timeOUT}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
                         fontWeight: "bold",
-                        width: "100px",
+                        width: "120px",
                         textAlign: "center",
                       }}
                     >
@@ -969,11 +936,8 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.timeDifferencePM}
+                      {row.formattedFacultyRenderedTime === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTime}
                     </TableCell>
-
-
-                      {/*    ----------------------PM  ------------------------------*/}
                     <TableCell
                       sx={{
                         backgroundColor: "#ffd2d2",
@@ -982,18 +946,10 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.tardPMFinal}
+                      {row.formattedfinalcalcFaculty === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTime : row.formattedfinalcalcFaculty}
                     </TableCell>
-                     {/*    ----------------------PM  ------------------------------*/}
 
-
-
-
-                    <TableCell>
-                      {row.officialHonorariumTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeIN}
-                    </TableCell>
+                    <TableCell>{row.officialHonorariumTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1002,15 +958,9 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialHonorariumTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialHonorariumTimeIN}
+                      {row.officialHonorariumTimeIN === "12:00:00 AM" ? "N/A" : row.officialHonorariumTimeIN}
                     </TableCell>
-                    <TableCell>
-                      {row.officialHonorariumTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeOUT}
-                    </TableCell>
+                    <TableCell>{row.officialHonorariumTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1019,9 +969,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialHonorariumTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialHonorariumTimeOUT}
+                      {row.officialHonorariumTimeOUT === "12:00:00 AM" ? "N/A" : row.officialHonorariumTimeOUT}
                     </TableCell>
 
                     <TableCell
@@ -1034,24 +982,20 @@ const AttendanceModuleFaculty = () => {
                     >
                       {row.timeDifferenceHonorarium}
                     </TableCell>
-                        {/*    ----------------------HN  ------------------------------*/}
-                        <TableCell
-                        sx={{
+                    {/*    ----------------------HN  ------------------------------*/}
+                    <TableCell
+                      sx={{
                         backgroundColor: "#ffd2d2",
                         fontWeight: "bold",
                         width: "100px",
                         textAlign: "center",
-                        }}
-                        >
-                        {row.tardHNFinal}
-                        </TableCell>
-                        {/*    ----------------------HN  ------------------------------*/}
+                      }}
+                    >
+                      {row.tardHNFinal}
+                    </TableCell>
+                    {/*    ----------------------HN  ------------------------------*/}
 
-                    <TableCell>
-                      {row.officialServiceCreditTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeIN}
-                    </TableCell>
+                    <TableCell>{row.officialServiceCreditTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1060,15 +1004,9 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialServiceCreditTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialServiceCreditTimeIN}
+                      {row.officialServiceCreditTimeIN === "12:00:00 AM" ? "N/A" : row.officialServiceCreditTimeIN}
                     </TableCell>
-                    <TableCell>
-                      {row.officialServiceCreditTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeOUT}
-                    </TableCell>
+                    <TableCell>{row.officialServiceCreditTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1077,9 +1015,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialServiceCreditTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialServiceCreditTimeOUT}
+                      {row.officialServiceCreditTimeOUT === "12:00:00 AM" ? "N/A" : row.officialServiceCreditTimeOUT}
                     </TableCell>
 
                     <TableCell
@@ -1092,25 +1028,20 @@ const AttendanceModuleFaculty = () => {
                     >
                       {row.timeDifferenceServiceCredit}
                     </TableCell>
-                        {/*    ----------------------SC  ------------------------------*/}
-                        <TableCell
-                        sx={{
+                    {/*    ----------------------SC  ------------------------------*/}
+                    <TableCell
+                      sx={{
                         backgroundColor: "#ffd2d2",
                         fontWeight: "bold",
                         width: "100px",
                         textAlign: "center",
-                        }}
-                        >
-                        {row.tardSCFinal}
-                        </TableCell>
-                        {/*    ----------------------SC  ------------------------------*/}
-                    
+                      }}
+                    >
+                      {row.tardSCFinal}
+                    </TableCell>
+                    {/*    ----------------------SC  ------------------------------*/}
 
-                    <TableCell>
-                      {row.officialOverTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeIN}
-                    </TableCell>
+                    <TableCell>{row.officialOverTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1119,15 +1050,9 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialOverTimeIN === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialOverTimeIN}
+                      {row.officialOverTimeIN === "12:00:00 AM" ? "N/A" : row.officialOverTimeIN}
                     </TableCell>
-                    <TableCell>
-                      {row.officialOverTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.timeOUT}
-                    </TableCell>
+                    <TableCell>{row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT}</TableCell>
                     <TableCell
                       sx={{
                         backgroundColor: "#edfba6",
@@ -1136,9 +1061,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.officialOverTimeOUT === "12:00:00 AM"
-                        ? "N/A"
-                        : row.officialOverTimeOUT}
+                      {row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.officialOverTimeOUT}
                     </TableCell>
 
                     <TableCell
@@ -1152,29 +1075,22 @@ const AttendanceModuleFaculty = () => {
                       {row.timeDifferenceOvertime}
                     </TableCell>
 
-                        {/*    ----------------------OT  ------------------------------*/}
-                        <TableCell
-                        sx={{
+                    {/*    ----------------------OT  ------------------------------*/}
+                    <TableCell
+                      sx={{
                         backgroundColor: "#ffd2d2",
                         fontWeight: "bold",
                         width: "100px",
                         textAlign: "center",
-                        }}
-                        >
-                        {row.tardOTFinal}
-                        </TableCell>
-                        {/*    ----------------------OT  ------------------------------*/}
-
-
-
-
+                      }}
+                    >
+                      {row.tardOTFinal}
+                    </TableCell>
+                    {/*    ----------------------OT  ------------------------------*/}
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
-                  >
+                  <TableCell colSpan={5} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Morning):
                   </TableCell>
                   <TableCell
@@ -1197,10 +1113,7 @@ const AttendanceModuleFaculty = () => {
                   >
                     {calculateTotalTardAM()}
                   </TableCell>
-                  <TableCell
-                    colSpan={3}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
-                  >
+                  <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Afternoon):
                   </TableCell>
                   <TableCell
@@ -1220,11 +1133,10 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                       backgroundColor: "#ffd2d2",
                     }}
-                  >{calculateTotalTardPM()}</TableCell>
-                  <TableCell
-                    colSpan={3}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
                   >
+                    {calculateTotalTardPM()}
+                  </TableCell>
+                  <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Honorarium):
                   </TableCell>
                   <TableCell
@@ -1244,12 +1156,11 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                       backgroundColor: "#ffd2d2",
                     }}
-                  >{calculateTotalTardHN()}</TableCell>
-
-                  <TableCell
-                    colSpan={3}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
                   >
+                    {calculateTotalTardHN()}
+                  </TableCell>
+
+                  <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Service Credit):
                   </TableCell>
                   <TableCell
@@ -1269,11 +1180,10 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                       backgroundColor: "#ffd2d2",
                     }}
-                  >{calculateTotalTardSC()}</TableCell>
-                  <TableCell
-                    colSpan={3}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
                   >
+                    {calculateTotalTardSC()}
+                  </TableCell>
+                  <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Overtime):
                   </TableCell>
                   <TableCell
@@ -1293,13 +1203,12 @@ const AttendanceModuleFaculty = () => {
                       textAlign: "center",
                       backgroundColor: "#ffd2d2",
                     }}
-                  >{calculateTotalTardOT()}</TableCell>
+                  >
+                    {calculateTotalTardOT()}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
-                  >
+                  <TableCell colSpan={2} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Overall Rendered Time {startDate} to {endDate}:
                   </TableCell>
                   <TableCell
@@ -1318,7 +1227,7 @@ const AttendanceModuleFaculty = () => {
           </TableContainer>
         )}
 
-          <Button
+        <Button
           sx={{
             width: "200px",
             height: "55px",
