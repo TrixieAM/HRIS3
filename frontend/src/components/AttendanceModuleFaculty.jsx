@@ -224,11 +224,11 @@ const AttendanceModuleFaculty = () => {
         const defaultTimeFaculty = "00:00:00 AM";
         const midnightFaculty = new Date(`01/01/2000 ${defaultTimeFaculty}`);
 
-        const timeinfaculty = startDateFaculty > endOfficialTimeFaculty ? midnightFaculty : endOfficialTimeFaculty;
-        const timeoutfaculty = timeinfaculty === midnightFaculty ? midnightFaculty : endDateFaculty > endOfficialTimeFaculty ? endOfficialTimeFaculty : endDateFaculty;
+        const timeinfaculty = startDateFaculty > endOfficialTimeFaculty ? midnightFaculty : startDateFaculty < startOfficialTimeFaculty ? startOfficialTimeFaculty : startDateFaculty;
+        const timeoutfaculty = timeinfaculty === midnightFaculty ? midnightFaculty : endDateFaculty < endOfficialTimeFaculty ? endDateFaculty : endOfficialTimeFaculty;
 
         // Calculate difference in milliseconds
-        const diffMs = timeinfaculty - timeoutfaculty;
+        const diffMs = timeoutfaculty - timeinfaculty;
 
         // Convert milliseconds to hours, minutes, seconds
         const hoursFaculty = Math.floor(diffMs / (1000 * 60 * 60));
@@ -936,7 +936,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.formattedFacultyRenderedTime === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTime}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTime === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTime}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -946,7 +946,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.formattedfinalcalcFaculty === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTime : row.formattedfinalcalcFaculty}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFaculty === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTime : row.formattedfinalcalcFaculty}
                     </TableCell>
 
                     <TableCell>{row.officialHonorariumTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN}</TableCell>
