@@ -5,6 +5,8 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 
+const fileUpload = require("express-fileupload");
+
 const webtoken = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const bodyparser = require("body-parser");
@@ -23,6 +25,9 @@ const Attendance = require("./dashboardRoutes/Attendance");
 const app = express();
 
 //MIDDLEWARE
+app.use(fileUpload());
+app.use(express.json());
+
 app.use(express.json());
 app.use(cors());
 app.use(bodyparser.json());
@@ -293,39 +298,70 @@ app.get("/officialtimetable/:employeeID", (req, res) => {
   });
 });
 
+// app.post("/officialtimetable", (req, res) => {
+//   const { employeeID, records } = req.body;
+
+//   // Insert or update logic
+//   const sql = `
+//     INSERT INTO officialtime (
+//       employeeID, day,
+//       officialTimeIN,
+//       officialBreaktimeIN,
+//       officialBreaktimeOUT,
+//       officialTimeOUT,
+//       officialHonorariumTimeIN,
+//       officialHonorariumTimeOUT,
+//       officialServiceCreditTimeIN,
+//       officialServiceCreditTimeOUT,
+//       officialOverTimeIN,
+//       officialOverTimeOUT,
+//       breaktime
+//     )
+//     VALUES ?
+//     ON DUPLICATE KEY UPDATE
+//       officialTimeIN = VALUES(officialTimeIN),
+//       officialBreaktimeIN = VALUES(officialBreaktimeIN),
+//       officialBreaktimeOUT = VALUES(officialBreaktimeOUT),
+//       officialTimeOUT = VALUES(officialTimeOUT),
+//       officialHonorariumTimeIN = VALUES(officialHonorariumTimeIN),
+//       officialHonorariumTimeOUT = VALUES(officialHonorariumTimeOUT),
+//       officialServiceCreditTimeIN = VALUES(officialServiceCreditTimeIN),
+//       officialServiceCreditTimeOUT = VALUES(officialServiceCreditTimeOUT),
+//       officialOverTimeIN = VALUES(officialOverTimeIN),
+//       officialOverTimeOUT = VALUES(officialOverTimeOUT)
+//       WHERE employeeID = employeeID and day = day
+//   `;
+
+//   const values = records.map((r) => [
+//     employeeID,
+//     r.day,
+//     r.officialTimeIN,
+//     r.officialBreaktimeIN,
+//     r.officialBreaktimeOUT,
+//     r.officialTimeOUT,
+//     r.officialHonorariumTimeIN,
+//     r.officialHonorariumTimeOUT,
+//     r.officialServiceCreditTimeIN,
+//     r.officialServiceCreditTimeOUT,
+//     r.officialOverTimeIN,
+//     r.officialOverTimeOUT,
+//     r.breaktime,
+//   ]);
+
+//   db.query(sql, [values], (err) => {
+//     if (err) return res.status(500).json({ error: err.message });
+//     res.json({ message: "Records saved successfully" });
+//   });
+// });
+
 app.post("/officialtimetable", (req, res) => {
   const { employeeID, records } = req.body;
 
-  // Insert or update logic
-  const sql = `
-    INSERT INTO officialtime (
-      employeeID, day,
-      officialTimeIN,
-      officialBreaktimeIN,
-      officialBreaktimeOUT,
-      officialTimeOUT,
-      officialHonorariumTimeIN,
-      officialHonorariumTimeOUT,
-      officialServiceCreditTimeIN,
-      officialServiceCreditTimeOUT,
-      officialOverTimeIN,
-      officialOverTimeOUT,
-      breaktime
-    )
-    VALUES ? 
-    ON DUPLICATE KEY UPDATE 
-      officialTimeIN = VALUES(officialTimeIN),
-      officialBreaktimeIN = VALUES(officialBreaktimeIN),
-      officialBreaktimeOUT = VALUES(officialBreaktimeOUT),
-      officialTimeOUT = VALUES(officialTimeOUT),
-      officialHonorariumTimeIN = VALUES(officialHonorariumTimeIN),
-      officialHonorariumTimeOUT = VALUES(officialHonorariumTimeOUT),
-      officialServiceCreditTimeIN = VALUES(officialServiceCreditTimeIN),
-      officialServiceCreditTimeOUT = VALUES(officialServiceCreditTimeOUT),
-      officialOverTimeIN = VALUES(officialOverTimeIN),
-      officialOverTimeOUT = VALUES(officialOverTimeOUT)
-  `;
+  if (!records || records.length === 0) {
+    return res.status(400).json({ message: "No records to insert or update." });
+  }
 
+  // Prepare values for bulk insert
   const values = records.map((r) => [
     employeeID,
     r.day,
@@ -342,9 +378,194 @@ app.post("/officialtimetable", (req, res) => {
     r.breaktime,
   ]);
 
-  db.query(sql, [values], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "Records saved successfully" });
+  const sql = `
+    INSERT INTO officialtime (
+      employeeID, day,
+      officialTimeIN,
+      officialBreaktimeIN,
+      officialBreaktimeOUT,
+      officialTimeOUT,
+      officialHonorariumTimeIN,
+      officialHonorariumTimeOUT,
+      officialServiceCreditTimeIN,
+      officialServiceCreditTimeOUT,
+      officialOverTimeIN,
+      officialOverTimeOUT,
+      breaktime
+    )
+    VALUES ?
+    ON DUPLICATE KEY UPDATE 
+      officialTimeIN = VALUES(officialTimeIN),
+      officialBreaktimeIN = VALUES(officialBreaktimeIN),
+      officialBreaktimeOUT = VALUES(officialBreaktimeOUT),
+      officialTimeOUT = VALUES(officialTimeOUT),
+      officialHonorariumTimeIN = VALUES(officialHonorariumTimeIN),
+      officialHonorariumTimeOUT = VALUES(officialHonorariumTimeOUT),
+      officialServiceCreditTimeIN = VALUES(officialServiceCreditTimeIN),
+      officialServiceCreditTimeOUT = VALUES(officialServiceCreditTimeOUT),
+      officialOverTimeIN = VALUES(officialOverTimeIN),
+      officialOverTimeOUT = VALUES(officialOverTimeOUT),
+      breaktime = VALUES(breaktime)
+  `;
+
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      console.error("Error inserting or updating records:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Records inserted or updated successfully" });
+  });
+});
+
+// EXCEL UPLOAD FOR OFFICIAL TIME
+
+// app.post("/upload-excel-faculty-official-time", (req, res) => {
+//   if (!req.files || !req.files.file) {
+//     return res.status(400).json({ message: "No file uploaded." });
+//   }
+
+//   const file = req.files.file;
+//   const workbook = xlsx.read(file.data, { type: "buffer" });
+//   const sheetName = workbook.SheetNames[0];
+//   const sheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+//   if (!sheet.length) {
+//     return res.status(400).json({ message: "Excel file is empty." });
+//   }
+
+//   const values = sheet.map((row) => [
+//     row.employeeID,
+//     row.day,
+//     row.officialTimeIN,
+//     row.officialBreaktimeIN,
+//     row.officialBreaktimeOUT,
+//     row.officialTimeOUT,
+//     row.officialHonorariumTimeIN,
+//     row.officialHonorariumTimeOUT,
+//     row.officialServiceCreditTimeIN,
+//     row.officialServiceCreditTimeOUT,
+//     row.officialOverTimeIN,
+//     row.officialOverTimeOUT,
+//   ]);
+
+//   const sql = `
+//     INSERT INTO officialtime (
+//       employeeID, day,
+//       officialTimeIN,
+//       officialBreaktimeIN,
+//       officialBreaktimeOUT,
+//       officialTimeOUT,
+//       officialHonorariumTimeIN,
+//       officialHonorariumTimeOUT,
+//       officialServiceCreditTimeIN,
+//       officialServiceCreditTimeOUT,
+//       officialOverTimeIN,
+//       officialOverTimeOUT
+
+//     )
+//     VALUES ?
+//     ON DUPLICATE KEY UPDATE
+//       officialTimeIN = VALUES(officialTimeIN),
+//       officialBreaktimeIN = VALUES(officialBreaktimeIN),
+//       officialBreaktimeOUT = VALUES(officialBreaktimeOUT),
+//       officialTimeOUT = VALUES(officialTimeOUT),
+//       officialHonorariumTimeIN = VALUES(officialHonorariumTimeIN),
+//       officialHonorariumTimeOUT = VALUES(officialHonorariumTimeOUT),
+//       officialServiceCreditTimeIN = VALUES(officialServiceCreditTimeIN),
+//       officialServiceCreditTimeOUT = VALUES(officialServiceCreditTimeOUT),
+//       officialOverTimeIN = VALUES(officialOverTimeIN),
+//       officialOverTimeOUT = VALUES(officialOverTimeOUT)
+
+//   `;
+
+//   db.query(sql, [values], (err, result) => {
+//     if (err) {
+//       console.error("Error inserting/updating records:", err);
+//       return res.status(500).json({ error: err.message });
+//     }
+//     res.json({ message: "Excel data uploaded successfully", affectedRows: result.affectedRows });
+//   });
+// });
+
+app.post("/upload-excel-faculty-official-time", (req, res) => {
+  if (!req.files || !req.files.file) {
+    console.error("No file uploaded.");
+    return res.status(400).json({ message: "No file uploaded." });
+  }
+
+  const file = req.files.file;
+  console.log("Uploaded file:", file.name);
+
+  const workbook = xlsx.read(file.data, { type: "buffer" });
+  const sheetName = workbook.SheetNames[0];
+  const sheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+  console.log("Extracted Data:", sheet);
+
+  if (!sheet.length) {
+    console.error("Excel file is empty.");
+    return res.status(400).json({ message: "Excel file is empty." });
+  }
+
+  const values = sheet
+    .map((row) => [
+      row.employeeID?.toString().trim(),
+      row.day,
+      row.officialTimeIN || null,
+      row.officialBreaktimeIN || null,
+      row.officialBreaktimeOUT || null,
+      row.officialTimeOUT || null,
+      row.officialHonorariumTimeIN || null,
+      row.officialHonorariumTimeOUT || null,
+      row.officialServiceCreditTimeIN || null,
+      row.officialServiceCreditTimeOUT || null,
+      row.officialOverTimeIN || null,
+      row.officialOverTimeOUT || null,
+    ])
+    .filter((row) => row[0]); // Remove rows without employeeID
+
+  if (values.length === 0) {
+    console.error("No valid data to insert.");
+    return res.status(400).json({ message: "No valid data to insert." });
+  }
+
+  const sql = `
+    INSERT INTO officialtime (
+      employeeID, day,
+      officialTimeIN,
+      officialBreaktimeIN,
+      officialBreaktimeOUT,
+      officialTimeOUT,
+      officialHonorariumTimeIN,
+      officialHonorariumTimeOUT,
+      officialServiceCreditTimeIN,
+      officialServiceCreditTimeOUT,
+      officialOverTimeIN,
+      officialOverTimeOUT
+    )
+    VALUES ?
+    ON DUPLICATE KEY UPDATE 
+      officialTimeIN = VALUES(officialTimeIN),
+      officialBreaktimeIN = VALUES(officialBreaktimeIN),
+      officialBreaktimeOUT = VALUES(officialBreaktimeOUT),
+      officialTimeOUT = VALUES(officialTimeOUT),
+      officialHonorariumTimeIN = VALUES(officialHonorariumTimeIN),
+      officialHonorariumTimeOUT = VALUES(officialHonorariumTimeOUT),
+      officialServiceCreditTimeIN = VALUES(officialServiceCreditTimeIN),
+      officialServiceCreditTimeOUT = VALUES(officialServiceCreditTimeOUT),
+      officialOverTimeIN = VALUES(officialOverTimeIN),
+      officialOverTimeOUT = VALUES(officialOverTimeOUT)
+  `;
+
+  console.log("SQL Query:", sql);
+  console.log("Values:", values);
+
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      console.error("MySQL Error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Excel data uploaded successfully", affectedRows: result.affectedRows });
   });
 });
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 const OfficialTimeForm = () => {
   const [employeeID, setemployeeID] = useState("");
   const [records, setRecords] = useState([]);
@@ -163,9 +163,55 @@ const OfficialTimeForm = () => {
       .catch((err) => console.error("Error saving data:", err));
   };
 
+  const [file, setFile] = useState(null);
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert("Please select a file!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("http://localhost:5000/upload-excel-faculty-official-time", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed!");
+    }
+  };
+
   return (
     <div>
-      <h2>Official Time Schedule</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "2rem" }}>
+        {/* Left side - Title */}
+        <div style={{ textAlign: "left" }}>
+          <Typography variant="h4">Official Time Schedule</Typography>
+        </div>
+
+        {/* Right side - Upload Section */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <Typography variant="h6">Upload Excel File</Typography>
+
+          <input type="file" accept=".xlsx,.xls" id="upload-button" style={{ display: "none" }} onChange={(e) => setFile(e.target.files[0])} />
+
+          <label htmlFor="upload-button">
+            <Button variant="contained" component="span" startIcon={<CloudUploadIcon />}>
+              Choose File
+            </Button>
+          </label>
+
+          {file && <Typography variant="body2">{file.name}</Typography>}
+
+          <Button variant="contained" color="primary" onClick={handleUpload} disabled={!file}>
+            Upload Excel
+          </Button>
+        </div>
+      </div>
       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
         <TextField label="Employee ID" variant="outlined" size="small" value={employeeID} onChange={(e) => setemployeeID(e.target.value)} />
         <Button variant="contained" color="primary" onClick={handleSearch}>
@@ -175,7 +221,7 @@ const OfficialTimeForm = () => {
       {loading && <p>Loading...</p>}
       {records.length > 0 && (
         <form onSubmit={handleSubmit}>
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{ maxHeight: "500px", overflow: "auto" }}>
             <Table>
               <TableHead>
                 <TableRow>
