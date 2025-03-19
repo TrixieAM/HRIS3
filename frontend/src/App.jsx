@@ -27,6 +27,7 @@ import AttendanceForm from "./components/AllAttendanceRecord";
 import AttendanceSearch from "./components/ViewAttendance";
 import AttendanceModule from "./components/AttendanceModule";
 import AttendanceModuleFaculty from "./components/AttendanceModuleFaculty";
+import AttendanceModuleFaculty40hrs from "./components/AttendanceModuleFaculty40hrs";
 import OverallAttendancePage from "./components/OverallAttendance";
 import PDS1 from "./components/PDS1";
 import PDS2 from "./components/PDS2";
@@ -45,6 +46,12 @@ function App() {
   const handleClick = () => {
     setOpen(!open);
   };
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const user = localStorage.getItem("userToken"); // Example token check
+    setIsLoggedIn(!!user);
+  }, []);
 
   const handleClickAttendance = () => {
     setOpen2(!open2);
@@ -115,13 +122,14 @@ function App() {
             <Toolbar />
 
             <List>
-              <ListItem button component={Link} sx={{ color: "black" }} to="/home">
-                <ListItemIcon>
-                  <House sx={{ fontSize: 29, marginLeft: "-6%" }} />
-                </ListItemIcon>
-                <ListItemText primary="Home" />
-              </ListItem>
-
+              {isLoggedIn && (
+                <ListItem button component={Link} sx={{ color: "black" }} to="/home">
+                  <ListItemIcon>
+                    <House sx={{ fontSize: 29, marginLeft: "-6%" }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Home" />
+                </ListItem>
+              )}
               <ListItem button onClick={handleClick} sx={{ color: "black" }}>
                 <ListItemIcon>
                   <DashboardIcon />
@@ -303,7 +311,17 @@ function App() {
                     <ListItemIcon sx={{ marginRight: "-1rem" }}>
                       <BadgeRounded />
                     </ListItemIcon>
-                    <ListItemText primary="Attendance Module Faculty" />
+                    <ListItemText primary="Attendance Module Faculty (30hrs)" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <Collapse in={open2} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding sx={{ pl: 4 }}>
+                  <ListItem button component={Link} to="/attendance_module_faculty_40hrs" sx={{ color: "black" }}>
+                    <ListItemIcon sx={{ marginRight: "-1rem" }}>
+                      <BadgeRounded />
+                    </ListItemIcon>
+                    <ListItemText primary="Attendance Module Faculty (Designated)" />
                   </ListItem>
                 </List>
               </Collapse>
@@ -510,6 +528,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
                     <AttendanceModuleFaculty />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/attendance_module_faculty_40hrs"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <AttendanceModuleFaculty40hrs />
                   </ProtectedRoute>
                 }
               />

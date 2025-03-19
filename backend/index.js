@@ -52,6 +52,17 @@ const db = mysql.createConnection({
   database: "earist_hris",
 });
 
+
+
+//MYSQL CONNECTION
+const db2= mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "earist_hris",
+});
+
+
 db.connect((err) => {
   if (err) throw err;
   console.log("Database Connected");

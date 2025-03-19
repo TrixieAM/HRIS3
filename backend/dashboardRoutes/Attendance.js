@@ -298,28 +298,19 @@ router.get("/api/dtr", (req, res) => {
 });
 
 router.post("/api/overall_attendance", (req, res) => {
-  const { employeeNumber, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, totalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime } = req.body;
+  const { employeeNumber, startDate, endDate, totalRenderedTimeMorning } = req.body;
 
   const query = `
     INSERT INTO overall_attendance_record (
       personID, 
       startDate, 
       endDate, 
-      totalRenderedTimeMorning, 
-      totalTardAM,
-      totalRenderedTimeAfternoon, 
-      totalTardPM,
-      totalRenderedHonorarium, 
-      totalTardHR,
-      totalRenderedServiceCredit,
-      totalTardSC, 
-      totalRenderedOvertime, 
-      totalTardOT,
-      overallRenderedTime
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      totalRenderedTimeMorning 
+
+    ) VALUES (?, ?, ?, ?)
   `;
 
-  db.query(query, [employeeNumber, startDate, endDate, totalRenderedTimeMorning, totalTardAM, totalRenderedTimeAfternoon, totalTardPM, totalRenderedHonorarium, totalTardHR, totalRenderedServiceCredit, totalTardSC, totalRenderedOvertime, totalTardOT, overallRenderedTime], (error, results) => {
+  db.query(query, [employeeNumber, startDate, endDate, totalRenderedTimeMorning], (error, results) => {
     if (error) {
       console.error("Error inserting data:", error);
       return res.status(500).json({ message: "Database error", error });

@@ -63,156 +63,6 @@ const AttendanceModuleFaculty = () => {
 
         const OfficialBreakPM = parsedBreaktimeOUT.isAfter(parsedOfficialBreaktimeOUT) ? parsedBreaktimeOUT.format("hh:mm:ss A") : parsedOfficialBreaktimeOUT.format("hh:mm:ss A");
 
-        const tardBreakIN = parsedOfficialBreaktimeIN.format("hh:mm:ss A");
-        const tardTimeIN = parsedOfficialTimeIN.format("hh:mm:ss A");
-        const tardBreakOUT = parsedOfficialBreaktimeOUT.format("hh:mm:ss A");
-        const tardTimeOut = parsedOfficialTimeOUT.format("hh:mm:ss A");
-        const tardHNIn = parsedOfficialHonorariumTimeIN.format("hh:mm:ss A");
-        const tardHNOut = parsedOfficialHonorariumTimeOUT.format("hh:mm:ss A");
-        const tardSCIn = parsedOfficialServiceCreditTimeIN.format("hh:mm:ss A");
-        const tardSCOut = parsedOfficialServiceCreditTimeOUT.format("hh:mm:ss A");
-        const tardOTIn = parsedOfficialOverTimeIN.format("hh:mm:ss A");
-        const tardOTOut = parsedOfficialOverTimeOUT.format("hh:mm:ss A");
-
-        // Function to calculate time difference in HH:mm:ss format
-        const calculateTimeDifference = (timeIN, timeOUT) => {
-          if (!timeIN || !timeOUT) return "";
-
-          const timeInDate = new Date(`1970-01-01T${convertTo24Hour(timeIN)}`);
-          const timeOutDate = new Date(`1970-01-01T${convertTo24Hour(timeOUT)}`);
-
-          if (isNaN(timeInDate.getTime()) || isNaN(timeOutDate.getTime())) {
-            return "00:00:00";
-          }
-
-          const diff = new Date(timeOutDate - timeInDate);
-          return `${String(diff.getUTCHours()).padStart(2, "0")}:${String(diff.getUTCMinutes()).padStart(2, "0")}:${String(diff.getUTCSeconds()).padStart(2, "0")}`;
-        };
-
-        // Convert 12-hour time to 24-hour format
-        const convertTo24Hour = (time) => {
-          if (!time) return "";
-
-          const [timeStr, modifier] = time.split(" ");
-          let [hours, minutes, seconds] = timeStr.split(":");
-
-          if (modifier === "PM" && hours !== "12") {
-            hours = String(Number(hours) + 12);
-          } else if (modifier === "AM" && hours === "12") {
-            hours = "00";
-          }
-
-          return `${hours}:${minutes}:${seconds}`;
-        };
-
-        // Function to compare times in HH:mm:ss format
-        const isTimeGreaterThan = (time1, time2) => {
-          const [h1, m1, s1] = time1.split(":").map(Number);
-          const [h2, m2, s2] = time2.split(":").map(Number);
-          return h1 > h2 || (h1 === h2 && (m1 > m2 || (m1 === m2 && s1 > s2)));
-        };
-
-        // Function to calculate and reset time difference if it exceeds threshold
-        const calculateAdjustedTimeDifference = (timeIN, timeOUT, threshold = "08:00:00") => {
-          const timeDifference = calculateTimeDifference(timeIN, timeOUT);
-          if (isTimeGreaterThan(timeDifference, threshold)) {
-            return "00:00:00";
-          }
-          return timeDifference;
-        };
-
-        // Calculate and adjust each time difference
-        const timeDifferenceHonorarium = calculateAdjustedTimeDifference(HonorariumTimeIN, HonorariumTimeOUT);
-        const timeDifferenceServiceCredit = calculateAdjustedTimeDifference(ServiceCreditTimeIN, ServiceCreditTimeOUT);
-        const timeDifferenceOvertime = calculateAdjustedTimeDifference(OverTimeIN, OverTimeOUT);
-        const timeDifferenceAM = calculateAdjustedTimeDifference(OfficialTimeMorning, OfficialBreakAM);
-        const timeDifferencePM = calculateAdjustedTimeDifference(OfficialBreakPM, OfficialTimeAfternoon);
-
-        const timeDifferenceFaculty = calculateAdjustedTimeDifference(OfficialTimeMorning, OfficialTimeAfternoon);
-
-        const tardtimeDifferenceFaculty1 = calculateTimeDifference(OfficialTimeMorning, tardBreakIN);
-        const tardtimeDifferenceFaculty2 = calculateTimeDifference(OfficialTimeAfternoon, tardTimeOut);
-
-        const tardtimeDifferenceAM1 = calculateTimeDifference(OfficialBreakAM, tardBreakIN);
-        const tardtimeDifferenceAM2 = calculateTimeDifference(tardTimeIN, OfficialTimeMorning);
-
-        const tardtimeDifferencePM1 = calculateTimeDifference(tardBreakOUT, OfficialBreakPM);
-        const tardtimeDifferencePM2 = calculateTimeDifference(OfficialTimeAfternoon, tardTimeOut);
-
-        const tardtimeDifferenceHN1 = calculateTimeDifference(HonorariumTimeIN, tardHNIn);
-        const tardtimeDifferenceHN2 = calculateTimeDifference(HonorariumTimeOUT, tardHNOut);
-
-        const tardtimeDifferenceSC1 = calculateTimeDifference(ServiceCreditTimeIN, tardSCIn);
-        const tardtimeDifferenceSC2 = calculateTimeDifference(ServiceCreditTimeOUT, tardSCOut);
-
-        const tardtimeDifferenceOT1 = calculateTimeDifference(OverTimeIN, tardOTIn);
-        const tardtimeDifferenceOT2 = calculateTimeDifference(OverTimeOUT, tardOTOut);
-
-        function addTimeStrings(time1, time2) {
-          // Split the time strings into hours, minutes, and seconds
-          const [hours1, minutes1, seconds1] = time1.split(":").map(Number);
-          const [hours2, minutes2, seconds2] = time2.split(":").map(Number);
-
-          // Add the seconds, minutes, and hours
-          let totalSeconds = seconds1 + seconds2;
-          let totalMinutes = minutes1 + minutes2 + Math.floor(totalSeconds / 60);
-          let totalHours = hours1 + hours2 + Math.floor(totalMinutes / 60);
-
-          // Normalize the seconds and minutes
-          totalSeconds %= 60;
-          totalMinutes %= 60;
-
-          // Format the result back into HH:MM:SS
-          const formattedHours = String(totalHours).padStart(2, "0");
-          const formattedMinutes = String(totalMinutes).padStart(2, "0");
-          const formattedSeconds = String(totalSeconds).padStart(2, "0");
-
-          return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-        }
-
-        const theOfficialTimeIN = parsedOfficialTimeIN.format("hh:mm:ss A");
-        const theOfficialBreaktimeIN = parsedOfficialBreaktimeIN.format("hh:mm:ss A");
-
-        const theOfficialBreaktimeOUT = parsedOfficialOverTimeOUT.format("hh:mm:ss A");
-        const theOfficialTimeOUT = parsedOfficialTimeOUT.format("hh:mm:ss A");
-
-        const theOfficialHonorariumTimeIN = parsedOfficialHonorariumTimeIN.format("hh:mm:ss A");
-        const theOfficialHonorariumTimeOUT = parsedOfficialHonorariumTimeOUT.format("hh:mm:ss A");
-
-        const theOfficialServiceCreditTimeIN = parsedOfficialServiceCreditTimeIN.format("hh:mm:ss A");
-        const theOfficialServiceCreditTimeOUT = parsedOfficialServiceCreditTimeOUT.format("hh:mm:ss A");
-
-        const theOfficialOverTimeIN = parsedOfficialOverTimeIN.format("hh:mm:ss A");
-        const theOfficialOverTimeOUT = parsedOfficialOverTimeOUT.format("hh:mm:ss A");
-
-        const maxRenderedTimeAM = calculateTimeDifference(theOfficialTimeIN, theOfficialBreaktimeIN);
-        const maxRenderedTimePM = calculateTimeDifference(theOfficialBreaktimeOUT, theOfficialTimeOUT);
-
-        const maxRenderedFaculty = calculateTimeDifference(theOfficialTimeIN, theOfficialTimeOUT);
-
-        const maxRenderedTimeHN = calculateTimeDifference(theOfficialHonorariumTimeIN, theOfficialHonorariumTimeOUT);
-        const maxRenderedTimeSC = calculateTimeDifference(theOfficialServiceCreditTimeIN, theOfficialServiceCreditTimeOUT);
-
-        const maxRenderedTimeOT = calculateTimeDifference(theOfficialOverTimeIN, theOfficialOverTimeOUT);
-
-        const tardAM = addTimeStrings(tardtimeDifferenceAM1, tardtimeDifferenceAM2);
-        const tardFaculty = addTimeStrings(tardtimeDifferenceFaculty1, tardtimeDifferenceFaculty2);
-        const tardPM = addTimeStrings(tardtimeDifferencePM1, tardtimeDifferencePM2);
-        const tardHN = addTimeStrings(tardtimeDifferenceHN1, tardtimeDifferenceHN2);
-        const tardSC = addTimeStrings(tardtimeDifferenceSC1, tardtimeDifferenceSC2);
-        const tardOT = addTimeStrings(tardtimeDifferenceOT1, tardtimeDifferenceOT2);
-
-        const tardAMFinal = maxRenderedTimeAM < tardAM ? "00:00:00" : tardAM;
-
-        const tardPMFinal = maxRenderedTimePM < tardPM ? "00:00:00" : tardPM;
-
-        const tardFacultyFinal = maxRenderedFaculty > tardFaculty ? maxRenderedFaculty : tardFaculty;
-
-        const tardHNFinal = maxRenderedTimeHN < tardHN ? "00:00:00" : tardHN;
-        const tardSCFinal = maxRenderedTimeSC < tardSC ? "00:00:00" : tardSC;
-
-        const tardOTFinal = maxRenderedTimeOT < tardOT ? "00:00:00" : tardOT;
-
         // start faculty render
 
         // rendered time
@@ -221,6 +71,7 @@ const AttendanceModuleFaculty = () => {
         const endDateFaculty = new Date(`01/01/2000 ${timeOUT}`);
         const startOfficialTimeFaculty = new Date(`01/01/2000 ${officialTimeIN}`);
         const endOfficialTimeFaculty = new Date(`01/01/2000 ${officialTimeOUT}`);
+
         const defaultTimeFaculty = "00:00:00 AM";
         const midnightFaculty = new Date(`01/01/2000 ${defaultTimeFaculty}`);
 
@@ -235,14 +86,14 @@ const AttendanceModuleFaculty = () => {
         const minutesFaculty = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
         const secondsFaculty = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-        // Format output as HH:MM:SS
+        // Format output as HH:MM:SS RENDERERED TIME
         const formattedFacultyRenderedTime = [String(hoursFaculty).padStart(2, "0"), String(minutesFaculty).padStart(2, "0"), String(secondsFaculty).padStart(2, "0")].join(":");
 
         //end rendered time
 
         //  max rendered time
 
-        // Calculate difference in milliseconds
+        // Calculate difference in milliseconds MAX RENDERED TIME
         const diffMsFaculty = endOfficialTimeFaculty - startOfficialTimeFaculty;
 
         // Convert milliseconds to hours, minutes, seconds
@@ -252,6 +103,8 @@ const AttendanceModuleFaculty = () => {
 
         // Format output as HH:MM:SS
         const formattedFacultyMaxRenderedTime = [String(hoursFacultyMRT).padStart(2, "0"), String(minutesFacultyMRT).padStart(2, "0"), String(secondsFacultyMRT).padStart(2, "0")].join(":");
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
 
         const tardFinalformattedFacultyRenderedTime = new Date(`01/01/2000 ${formattedFacultyRenderedTime}`);
         const tardFinalformattedFacultyMaxRenderedTime = new Date(`01/01/2000 ${formattedFacultyMaxRenderedTime}`);
@@ -267,6 +120,183 @@ const AttendanceModuleFaculty = () => {
         const formattedfinalcalcFaculty = [String(hoursfinalcalcFaculty).padStart(2, "0"), String(minutesfinalcalcFaculty).padStart(2, "0"), String(secondsfinalcalcFaculty).padStart(2, "0")].join(":");
 
         // // end max rendered time
+
+        // HN ------------------------------------------------------------------------------
+
+        // rendered time
+        // Convert time strings to Date objects
+        const startDateFacultyHN = new Date(`01/01/2000 ${timeIN}`);
+        const endDateFacultyHN = new Date(`01/01/2000 ${timeOUT}`);
+        const startOfficialTimeFacultyHN = new Date(`01/01/2000 ${officialHonorariumTimeIN}`);
+        const endOfficialTimeFacultyHN = new Date(`01/01/2000 ${officialHonorariumTimeOUT}`);
+
+        const defaultTimeFacultyHN = "00:00:00 AM";
+        const midnightFacultyHN = new Date(`01/01/2000 ${defaultTimeFacultyHN}`);
+
+        const timeinfacultyHN = endDateFacultyHN < startOfficialTimeFacultyHN ? midnightFacultyHN : startDateFacultyHN > endOfficialTimeFacultyHN ? midnightFacultyHN : startDateFacultyHN < startOfficialTimeFacultyHN ? startOfficialTimeFacultyHN : startDateFacultyHN;
+        const timeoutfacultyHN = timeinfacultyHN === midnightFacultyHN ? midnightFacultyHN : endDateFacultyHN < startOfficialTimeFacultyHN ? midnightFacultyHN : endDateFacultyHN < endOfficialTimeFacultyHN ? endDateFacultyHN : endOfficialTimeFacultyHN;
+
+        // Calculate difference in milliseconds
+        const diffMsHN = timeoutfacultyHN - timeinfacultyHN;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyHN = Math.floor(diffMsHN / (1000 * 60 * 60));
+        const minutesFacultyHN = Math.floor((diffMsHN % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyHN = Math.floor((diffMsHN % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS RENDERERED TIME
+        const formattedFacultyRenderedTimeHN = [String(hoursFacultyHN).padStart(2, "0"), String(minutesFacultyHN).padStart(2, "0"), String(secondsFacultyHN).padStart(2, "0")].join(":");
+
+        //end rendered time
+
+        //  max rendered time
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+        const diffMsFacultyHN = endOfficialTimeFacultyHN - startOfficialTimeFacultyHN;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyMRTHN = Math.floor(diffMsFacultyHN / (1000 * 60 * 60));
+        const minutesFacultyMRTHN = Math.floor((diffMsFacultyHN % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyMRTHN = Math.floor((diffMsFacultyHN % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedFacultyMaxRenderedTimeHN = [String(hoursFacultyMRTHN).padStart(2, "0"), String(minutesFacultyMRTHN).padStart(2, "0"), String(secondsFacultyMRTHN).padStart(2, "0")].join(":");
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+
+        const tardFinalformattedFacultyRenderedTimeHN = new Date(`01/01/2000 ${formattedFacultyRenderedTimeHN}`);
+        const tardFinalformattedFacultyMaxRenderedTimeHN = new Date(`01/01/2000 ${formattedFacultyMaxRenderedTimeHN}`);
+
+        const finalcalcFacultyHN = tardFinalformattedFacultyMaxRenderedTimeHN - tardFinalformattedFacultyRenderedTimeHN;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursfinalcalcFacultyHN = Math.floor(finalcalcFacultyHN / (1000 * 60 * 60));
+        const minutesfinalcalcFacultyHN = Math.floor((finalcalcFacultyHN % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsfinalcalcFacultyHN = Math.floor((finalcalcFacultyHN % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedfinalcalcFacultyHN = [String(hoursfinalcalcFacultyHN).padStart(2, "0"), String(minutesfinalcalcFacultyHN).padStart(2, "0"), String(secondsfinalcalcFacultyHN).padStart(2, "0")].join(":");
+
+        // // end max rendered time
+        //HN END-----------------------------------------------------------------------------
+
+        // SC ------------------------------------------------------------------------------
+
+        // rendered time
+        // Convert time strings to Date objects
+        const startDateFacultySC = new Date(`01/01/2000 ${timeIN}`);
+        const endDateFacultySC = new Date(`01/01/2000 ${timeOUT}`);
+        const startOfficialTimeFacultySC = new Date(`01/01/2000 ${officialTimeIN}`);
+        const endOfficialTimeFacultySC = new Date(`01/01/2000 ${officialTimeOUT}`);
+
+        const defaultTimeFacultySC = "00:00:00 AM";
+        const midnightFacultySC = new Date(`01/01/2000 ${defaultTimeFacultySC}`);
+
+        const timeinfacultySC = endDateFacultySC < startOfficialTimeFacultySC ? midnightFacultySC : startDateFacultySC > endOfficialTimeFacultySC ? midnightFacultySC : startDateFacultySC < startOfficialTimeFacultySC ? startOfficialTimeFacultySC : startDateFacultySC;
+        const timeoutfacultySC = timeinfacultySC === midnightFacultySC ? midnightFacultySC : endDateFacultySC < startOfficialTimeFacultySC ? midnightFacultySC : endDateFacultySC < endOfficialTimeFacultySC ? endDateFacultySC : endOfficialTimeFacultySC;
+
+        // Calculate difference in milliseconds
+        const diffMsSC = timeoutfacultySC - timeinfacultySC;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultySC = Math.floor(diffMsSC / (1000 * 60 * 60));
+        const minutesFacultySC = Math.floor((diffMsSC % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultySC = Math.floor((diffMsSC % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS RENDERERED TIME
+        const formattedFacultyRenderedTimeSC = [String(hoursFacultySC).padStart(2, "0"), String(minutesFacultySC).padStart(2, "0"), String(secondsFacultySC).padStart(2, "0")].join(":");
+
+        //end rendered time
+
+        //  max rendered time
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+        const diffMsFacultySC = endOfficialTimeFacultySC - startOfficialTimeFacultySC;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyMRTSC = Math.floor(diffMsFacultySC / (1000 * 60 * 60));
+        const minutesFacultyMRTSC = Math.floor((diffMsFacultySC % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyMRTSC = Math.floor((diffMsFacultySC % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedFacultyMaxRenderedTimeSC = [String(hoursFacultyMRTSC).padStart(2, "0"), String(minutesFacultyMRTSC).padStart(2, "0"), String(secondsFacultyMRTSC).padStart(2, "0")].join(":");
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+
+        const tardFinalformattedFacultyRenderedTimeSC = new Date(`01/01/2000 ${formattedFacultyRenderedTimeSC}`);
+        const tardFinalformattedFacultyMaxRenderedTimeSC = new Date(`01/01/2000 ${formattedFacultyMaxRenderedTimeSC}`);
+
+        const finalcalcFacultySC = tardFinalformattedFacultyMaxRenderedTimeSC - tardFinalformattedFacultyRenderedTimeSC;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursfinalcalcFacultySC = Math.floor(finalcalcFacultySC / (1000 * 60 * 60));
+        const minutesfinalcalcFacultySC = Math.floor((finalcalcFacultySC % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsfinalcalcFacultySC = Math.floor((finalcalcFacultySC % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedfinalcalcFacultySC = [String(hoursfinalcalcFacultySC).padStart(2, "0"), String(minutesfinalcalcFacultySC).padStart(2, "0"), String(secondsfinalcalcFacultySC).padStart(2, "0")].join(":");
+
+        // // end max rendered time
+        //SC END-----------------------------------------------------------------------------
+
+        // OT ------------------------------------------------------------------------------
+
+        // rendered time
+        // Convert time strings to Date objects
+        const startDateFacultyOT = new Date(`01/01/2000 ${timeIN}`);
+        const endDateFacultyOT = new Date(`01/01/2000 ${timeOUT}`);
+        const startOfficialTimeFacultyOT = new Date(`01/01/2000 ${officialOverTimeIN}`);
+        const endOfficialTimeFacultyOT = new Date(`01/01/2000 ${officialOverTimeOUT}`);
+
+        const defaultTimeFacultyOT = "00:00:00 AM";
+        const midnightFacultyOT = new Date(`01/01/2000 ${defaultTimeFacultyOT}`);
+
+        const timeinfacultyOT = endDateFacultyOT < startOfficialTimeFacultyOT ? midnightFacultyOT : startDateFacultyOT > endOfficialTimeFacultyOT ? midnightFacultyOT : startDateFacultyOT < startOfficialTimeFacultyOT ? startOfficialTimeFacultyOT : startDateFacultyOT;
+        const timeoutfacultyOT = timeinfacultyOT === midnightFacultyOT ? midnightFacultyOT : endDateFacultyOT < startOfficialTimeFacultyOT ? midnightFacultyOT : endDateFacultyOT < endOfficialTimeFacultyOT ? endDateFacultyOT : endOfficialTimeFacultyOT;
+
+        // Calculate difference in milliseconds
+        const diffMsOT = timeoutfacultyOT - timeinfacultyOT;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyOT = Math.floor(diffMsOT / (1000 * 60 * 60));
+        const minutesFacultyOT = Math.floor((diffMsOT % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyOT = Math.floor((diffMsOT % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS RENDERERED TIME
+        const formattedFacultyRenderedTimeOT = [String(hoursFacultyOT).padStart(2, "0"), String(minutesFacultyOT).padStart(2, "0"), String(secondsFacultyOT).padStart(2, "0")].join(":");
+
+        //end rendered time
+
+        //  max rendered time
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+        const diffMsFacultyOT = endOfficialTimeFacultyOT - startOfficialTimeFacultyOT;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursFacultyMRTOT = Math.floor(diffMsFacultyOT / (1000 * 60 * 60));
+        const minutesFacultyMRTOT = Math.floor((diffMsFacultyOT % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsFacultyMRTOT = Math.floor((diffMsFacultyOT % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedFacultyMaxRenderedTimeOT = [String(hoursFacultyMRTOT).padStart(2, "0"), String(minutesFacultyMRTOT).padStart(2, "0"), String(secondsFacultyMRTOT).padStart(2, "0")].join(":");
+
+        // Calculate difference in milliseconds MAX RENDERED TIME
+
+        const tardFinalformattedFacultyRenderedTimeOT = new Date(`01/01/2000 ${formattedFacultyRenderedTimeOT}`);
+        const tardFinalformattedFacultyMaxRenderedTimeOT = new Date(`01/01/2000 ${formattedFacultyMaxRenderedTimeOT}`);
+
+        const finalcalcFacultyOT = tardFinalformattedFacultyMaxRenderedTimeOT - tardFinalformattedFacultyRenderedTimeOT;
+
+        // Convert milliseconds to hours, minutes, seconds
+        const hoursfinalcalcFacultyOT = Math.floor(finalcalcFacultyOT / (1000 * 60 * 60));
+        const minutesfinalcalcFacultyOT = Math.floor((finalcalcFacultyOT % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsfinalcalcFacultyOT = Math.floor((finalcalcFacultyOT % (1000 * 60)) / 1000);
+
+        // Format output as HH:MM:SS
+        const formattedfinalcalcFacultyOT = [String(hoursfinalcalcFacultyOT).padStart(2, "0"), String(minutesfinalcalcFacultyOT).padStart(2, "0"), String(secondsfinalcalcFacultyOT).padStart(2, "0")].join(":");
+
+        // // end max rendered time
+        //OT END-----------------------------------------------------------------------------
 
         return {
           ...row,
@@ -286,34 +316,35 @@ const AttendanceModuleFaculty = () => {
           officialOverTimeOUT,
           OfficialTimeMorning,
           OfficialTimeAfternoon,
-          timeDifferenceHonorarium,
-          timeDifferenceServiceCredit,
-          timeDifferenceOvertime,
-          timeDifferenceAM,
-          timeDifferencePM,
+
           timeIN,
           timeOUT,
-          parsedDefaultTime,
-          tardtimeDifferenceAM1,
-          tardAM,
-          tardAMFinal,
-          tardPMFinal,
           OfficialBreakPM,
           breaktimeIN,
           breaktimeOUT,
-          tardHNFinal,
-          tardSCFinal,
-          tardOTFinal,
-          tardtimeDifferenceHN1,
-          timeDifferenceFaculty,
-          tardFacultyFinal,
-          tardFaculty,
-          tardtimeDifferenceFaculty1,
-          formattedFacultyRenderedTime,
-          formattedFacultyMaxRenderedTime,
+
           midnightFaculty,
-          formattedfinalcalcFaculty,
           finalcalcFaculty,
+
+          formattedfinalcalcFaculty,
+          formattedFacultyRenderedTime,
+
+          formattedFacultyMaxRenderedTime,
+
+          formattedfinalcalcFacultyHN,
+          formattedFacultyRenderedTimeHN,
+
+          formattedFacultyMaxRenderedTimeHN,
+
+          formattedfinalcalcFacultySC,
+          formattedFacultyRenderedTimeSC,
+
+          formattedFacultyMaxRenderedTimeSC,
+
+          formattedfinalcalcFacultyOT,
+          formattedFacultyRenderedTimeOT,
+
+          formattedFacultyMaxRenderedTimeOT,
         };
       });
 
@@ -323,187 +354,13 @@ const AttendanceModuleFaculty = () => {
     }
   };
 
-  // Helper function to convert HH:mm:ss to total seconds
-  // Helper function to convert HH:mm:ss to total seconds
-  const timeToSeconds = (time) => {
-    const ZERO_TIME = "00:00:00"; // Define ZERO_TIME as a fallback value
-    if (!time || time === ZERO_TIME) return 0;
-    const [hours, minutes, seconds] = time.split(":").map(Number);
-    return hours * 3600 + minutes * 60 + seconds;
-  };
-
-  // Helper function to convert total seconds to HH:mm:ss
-  const secondsToTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(hours).padStart(2, "0")}hrs, ${String(minutes).padStart(2, "0")} minutes and, ${String(seconds).padStart(2, "0")} seconds`;
-  };
-
-  const secondsToTimeSaved = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  };
-
-  // Calculate total time for each category
-  const calculateTotalTimeAM = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceAM), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTimeAMSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceAM), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTimePM = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferencePM), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTimePMSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferencePM), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTimeHN = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceHonorarium), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTimeHNSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceHonorarium), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTimeSC = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceServiceCredit), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTimeSCSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceServiceCredit), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTimeOT = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardAM = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardAMFinal), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardPM = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardPMFinal), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardHN = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardHNFinal), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardSC = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardSCFinal), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardOT = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardOTFinal), 0);
-    return secondsToTime(totalSeconds);
-  };
-
-  const calculateTotalTardAMSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardAMFinal), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTardPMSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardPMFinal), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTardHNSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardHNFinal), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTardSCSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardSCFinal), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTardOTSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.tardOTFinal), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  const calculateTotalTimeOTSaved = () => {
-    const totalSeconds = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
-    return secondsToTimeSaved(totalSeconds);
-  };
-
-  // Calculate overall total time
-  const calculateOverallTime = () => {
-    const totalSecondsAM = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceAM), 0);
-
-    const totalSecondsPM = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferencePM), 0);
-
-    const totalSecondsHN = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceHonorarium), 0);
-
-    const totalSecondsSC = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceServiceCredit), 0);
-
-    const totalSecondsOT = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
-
-    // Sum up all the total seconds
-    const overallTotalSeconds = totalSecondsAM + totalSecondsPM + totalSecondsHN + totalSecondsSC + totalSecondsOT;
-
-    // Convert total seconds to HH:mm:ss
-    return secondsToTime(overallTotalSeconds);
-  };
-
-  const calculateOverallTimeSaved = () => {
-    const totalSecondsAM = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceAM), 0);
-
-    const totalSecondsPM = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferencePM), 0);
-
-    const totalSecondsHN = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceHonorarium), 0);
-
-    const totalSecondsSC = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceServiceCredit), 0);
-
-    const totalSecondsOT = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
-
-    const totalSecondsTARTAM = attendanceData.reduce((acc, row) => acc + timeToSeconds(row.timeDifferenceOvertime), 0);
-
-    // Sum up all the total seconds
-    const overallTotalSeconds = totalSecondsAM + totalSecondsPM + totalSecondsHN + totalSecondsSC + totalSecondsOT;
-
-    // Convert total seconds to HH:mm:ss
-    return secondsToTimeSaved(overallTotalSeconds);
-  };
-
   const saveOverallAttendance = async () => {
     console.log("Employee Number:", employeeNumber);
     const record = {
       employeeNumber,
       startDate,
       endDate,
-      totalRenderedTimeMorning: calculateTotalTimeAMSaved("timeDifferenceAM"),
-      totalTardAM: calculateTotalTardAMSaved(),
-      totalRenderedTimeAfternoon: calculateTotalTimePMSaved("timeDifferencePM"),
-      totalTardPM: calculateTotalTardPMSaved(),
-      totalRenderedHonorarium: calculateTotalTimeHNSaved("timeDifferenceHonorarium"),
-      totalTardHR: calculateTotalTardHNSaved(),
-      totalRenderedServiceCredit: calculateTotalTimeSCSaved("timeDifferenceServiceCredit"),
-      totalTardSC: calculateTotalTardSCSaved(),
-      totalRenderedOvertime: calculateTotalTimeOTSaved("timeDifferenceOvertime"),
-      totalTardOT: calculateTotalTardOTSaved(),
-      overallRenderedTime: calculateOverallTimeSaved(),
+      totalRenderedTimeMorning: calculateTotalRenderedTime(), // Ensure this function exists
     };
 
     try {
@@ -515,60 +372,47 @@ const AttendanceModuleFaculty = () => {
     }
   };
 
-  const downloadExcel = () => {
-    const data = attendanceData.map((row) => ({
-      Date: row.date,
-      Day: row.day,
-      "Time IN": row.timeIN,
-      "Official Time IN": row.officialTimeIN,
-      "Breaktime IN": row.breaktimeIN,
-      "Official Breaktime IN": row.officialBreaktimeIN,
-      "Morning Rendered Time": row.timeDifferenceAM,
-      "Breaktime OUT": row.breaktimeOUT,
-      "Official Breaktime OUT": row.officialBreaktimeOUT,
-      "Time OUT": row.timeOUT,
-      "Official Time OUT": row.officialTimeOUT,
-      "Afternoon Rendered Time": row.timeDifferencePM,
-      "Honorarium Time IN": row.officialHonorariumTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN,
-      "Official Honorarium Time IN": row.officialHonorariumTimeIN,
-      "Honorarium Time OUT": row.officialHonorariumTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT,
-      "Official Honorarium Time OUT": row.officialHonorariumTimeOUT,
-      "Honorarium Rendered Time": row.timeDifferenceHonorarium,
-      "Service Credit Time IN": row.officialServiceCreditTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN,
-      "Official Service Credit Time IN": row.officialServiceCreditTimeIN,
-      "Service Credit Time OUT": row.officialServiceCreditTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT,
-      "Official Service Credit Time OUT": row.officialServiceCreditTimeOUT,
-      "Service Credit Rendered Time": row.timeDifferenceServiceCredit,
-      "Overtime Time IN": row.officialOverTimeIN === "12:00:00 AM" ? "N/A" : row.timeIN,
-      "Official Overtime Time IN": row.officialOverTimeIN,
-      "Overtime Time OUT": row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT,
-      "Official Overtime Time OUT": row.officialOverTimeOUT,
-      "Overtime Rendered Time": row.timeDifferenceOvertime,
-    }));
 
-    // Add total and overall rows to the data
-    data.push(
-      {
-        Date: "Total Rendered Time",
-        "Morning Rendered Time": calculateTotalTimeAM(),
-        "Afternoon Rendered Time": calculateTotalTimePM(),
-        "Honorarium Rendered Time": calculateTotalTimeHN(),
-        "Service Credit Rendered Time": calculateTotalTimeSC(),
-        "Overtime Rendered Time": calculateTotalTimeOT(),
-      },
-      {
-        Date: `Overall Rendered Time (${startDate} to ${endDate})`,
-        "Morning Rendered Time": calculateOverallTime(),
-      }
-    );
+  const calculateTotalRenderedTime = () => {
+    if (!attendanceData || attendanceData.length === 0) {
+      return "00:00:00"; // Handle empty data gracefully
+    }
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Data");
+    let totalSeconds = 0;
 
-    // Download the Excel file
-    XLSX.writeFile(workbook, "AttendanceData.xlsx");
+    attendanceData.forEach((row) => {
+      const facultyRenderedTime = !row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTime === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTime;
+
+      const [hours, minutes, seconds] = facultyRenderedTime.split(":").map(Number);
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    });
+
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const totalSecs = totalSeconds % 60;
+
+    // Return computed time
+    const overallTime = `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
+    return overallTime;
   };
+
+  const calculateTotalRenderedTimeTardiness = () => {
+    let totalSeconds = 0;
+
+    attendanceData.forEach((row) => {
+      const facultyRenderedTimeTardiness = !row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFaculty === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTime : row.formattedfinalcalcFaculty;
+
+      const [hours, minutes, seconds] = facultyRenderedTimeTardiness.split(":").map(Number);
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    });
+
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const totalSecs = totalSeconds % 60;
+
+    return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
+  };
+  // TIME IN AND TIME OUT END
 
   return (
     <Container
@@ -635,12 +479,6 @@ const AttendanceModuleFaculty = () => {
               Generate Report
             </Button>
           </Box>
-
-          {attendanceData.length > 0 && (
-            <Button variant="contained" color="primary" onClick={downloadExcel} sx={{ mb: 2 }}>
-              Download Excel for Users
-            </Button>
-          )}
         </form>
 
         {attendanceData.length > 0 && (
@@ -980,7 +818,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.timeDifferenceHonorarium}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTimeHN === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTimeHN}
                     </TableCell>
                     {/*    ----------------------HN  ------------------------------*/}
                     <TableCell
@@ -991,7 +829,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.tardHNFinal}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFacultyHN === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTimeHN : row.formattedfinalcalcFacultyHN}
                     </TableCell>
                     {/*    ----------------------HN  ------------------------------*/}
 
@@ -1026,7 +864,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.timeDifferenceServiceCredit}
+                      {!row.officialTimeSC || !row.timeOUT || row.formattedFacultyRenderedTimeSC === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTimeSC}
                     </TableCell>
                     {/*    ----------------------SC  ------------------------------*/}
                     <TableCell
@@ -1037,7 +875,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.tardSCFinal}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFacultySC === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTimeSC : row.formattedfinalcalcFacultySC}
                     </TableCell>
                     {/*    ----------------------SC  ------------------------------*/}
 
@@ -1053,16 +891,7 @@ const AttendanceModuleFaculty = () => {
                       {row.officialOverTimeIN === "12:00:00 AM" ? "N/A" : row.officialOverTimeIN}
                     </TableCell>
                     <TableCell>{row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.timeOUT}</TableCell>
-                    <TableCell
-                      sx={{
-                        backgroundColor: "#edfba6",
-                        fontWeight: "bold",
-                        width: "100px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.officialOverTimeOUT}
-                    </TableCell>
+                    <TableCell sx={{ backgroundColor: "#edfba6", fontWeight: "bold", width: "100px", textAlign: "center" }}>{row.officialOverTimeOUT === "12:00:00 AM" ? "N/A" : row.officialOverTimeOUT}</TableCell>
 
                     <TableCell
                       sx={{
@@ -1072,7 +901,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.timeDifferenceOvertime}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTimeOT === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTimeOT}
                     </TableCell>
 
                     {/*    ----------------------OT  ------------------------------*/}
@@ -1084,7 +913,7 @@ const AttendanceModuleFaculty = () => {
                         textAlign: "center",
                       }}
                     >
-                      {row.tardOTFinal}
+                      {!row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFacultyOT === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTimeOT : row.formattedfinalcalcFacultyOT}
                     </TableCell>
                     {/*    ----------------------OT  ------------------------------*/}
                   </TableRow>
@@ -1101,7 +930,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#bafac6",
                     }}
                   >
-                    {calculateTotalTimeAM()}
+                    {calculateTotalRenderedTime()}
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1111,20 +940,13 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                    {calculateTotalTardAM()}
+                    {calculateTotalRenderedTimeTardiness()}
                   </TableCell>
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Afternoon):
                   </TableCell>
-                  <TableCell
-                    colSpan={2}
-                    sx={{
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      backgroundColor: "#bafac6",
-                    }}
-                  >
-                    {calculateTotalTimePM()}
+                  <TableCell colSpan={2} sx={{ fontWeight: "bold", textAlign: "center", backgroundColor: "#bafac6" }}>
+                    calculateTotalRenderedTimeTardiness
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1134,7 +956,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                    {calculateTotalTardPM()}
+                    DUMMY
                   </TableCell>
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Honorarium):
@@ -1147,7 +969,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#bafac6",
                     }}
                   >
-                    {calculateTotalTimeHN()}
+                    DUMMY
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1157,7 +979,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                    {calculateTotalTardHN()}
+                    DUMMY
                   </TableCell>
 
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
@@ -1171,7 +993,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#bafac6",
                     }}
                   >
-                    {calculateTotalTimeSC()}
+                    DUMMY
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1181,7 +1003,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                    {calculateTotalTardSC()}
+                    DUMMY
                   </TableCell>
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Overtime):
@@ -1194,7 +1016,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#bafac6",
                     }}
                   >
-                    {calculateTotalTimeOT()}
+                    DUMMY
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1204,7 +1026,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                    {calculateTotalTardOT()}
+                    DUMMY
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -1219,7 +1041,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ADD8E6",
                     }}
                   >
-                    {calculateOverallTime()}
+                    DUMMY
                   </TableCell>
                 </TableRow>
               </TableBody>
