@@ -1,17 +1,6 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import {
-  TextField,
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import React, { useState } from "react";
+import axios from "axios";
+import { TextField, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 
 const formatTime = (time) => {
   if (!time) return "N/A";
@@ -46,10 +35,7 @@ const ViewAttendanceRecord = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5000/attendance/api/all-attendance",
-        { personID, startDate, endDate }
-      );
+      const response = await axios.post("http://localhost:5000/attendance/api/all-attendance", { personID, startDate, endDate });
       setRecords(response.data);
 
       if (response.data.length > 0) {
@@ -99,16 +85,9 @@ const ViewAttendanceRecord = () => {
         timeOUT: record.Time4 ? formatTime(record.Time4) : null,
       }));
 
-      const response = await axios.post(
-        "http://localhost:5000/api/save-attendance",
-        { records: formattedRecords }
-      );
+      const response = await axios.post("http://localhost:5000/attendance/api/save-attendance", { records: formattedRecords });
 
-      const savedMessages = response.data.map((result) =>
-        result.status === "exists"
-          ? `Record for ${result.personID} on ${result.date} already exists.`
-          : `Record for ${result.personID} on ${result.date} saved successfully.`
-      );
+      const savedMessages = response.data.map((result) => (result.status === "exists" ? `Record for ${result.personID} on ${result.date} already exists.` : `Record for ${result.personID} on ${result.date} saved successfully.`));
 
       alert(savedMessages.join("\n"));
     } catch (error) {
@@ -189,7 +168,7 @@ const ViewAttendanceRecord = () => {
       </form>
 
       {records.length > 0 && (
-        <TableContainer component={Paper} style={{marginBottom: '5%'}}>
+        <TableContainer component={Paper} style={{ marginBottom: "5%" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -216,12 +195,7 @@ const ViewAttendanceRecord = () => {
               ))}
             </TableBody>
           </Table>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleSaveRecords}
-            style={{ marginTop: "16px" }}
-          >
+          <Button variant="contained" color="secondary" onClick={handleSaveRecords} style={{ marginTop: "16px" }}>
             Save Records
           </Button>
         </TableContainer>

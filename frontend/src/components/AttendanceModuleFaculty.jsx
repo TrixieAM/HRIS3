@@ -357,12 +357,28 @@ const AttendanceModuleFaculty = () => {
   const saveOverallAttendance = async () => {
     console.log("Employee Number:", employeeNumber);
     const record = {
-      employeeNumber,
+      personID: employeeNumber,
       startDate,
       endDate,
-      totalRenderedTimeMorning: calculateTotalRenderedTime(), // Ensure this function exists
-    };
 
+      totalRenderedTimeMorning: "00:00:00",
+      totalRenderedTimeMorningTardiness: "00:00:00",
+
+      totalRenderedTimeAfternoon: "00:00:00",
+      totalRenderedTimeAfternoonTardiness: "00:00:00",
+
+      totalRenderedHonorarium: calculateTotalRenderedTimeHN(),
+      totalRenderedHonorariumTardiness: calculateTotalRenderedTimeTardinessHN(),
+
+      totalRenderedServiceCredit: calculateTotalRenderedTimeSC(),
+      totalRenderedServiceCreditTardiness: calculateTotalRenderedTimeTardinessSC(),
+
+      totalRenderedOvertime: calculateTotalRenderedTimeOT(),
+      totalRenderedOvertimeTardiness: calculateTotalRenderedTimeTardinessOT(),
+
+      overallRenderedOfficialTime: calculateTotalRenderedTime(),
+      overallRenderedOfficialTimeTardiness: calculateTotalRenderedTimeTardiness(),
+    };
 
     try {
       const response = await axios.post("http://localhost:5000/attendance/api/overall_attendance", record);
@@ -372,7 +388,7 @@ const AttendanceModuleFaculty = () => {
       alert("Failed to save attendance record.");
     }
   };
-  
+
   // TIME IN AND TIME OUT
   const calculateTotalRenderedTime = () => {
     if (!attendanceData || attendanceData.length === 0) {
@@ -396,9 +412,9 @@ const AttendanceModuleFaculty = () => {
 
     // return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
 
-     // Return computed time
-     const overallTime = `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
-     return overallTime;
+    // Return computed time
+    const overallTime = `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
+    return overallTime;
   };
 
   const calculateTotalRenderedTimeTardiness = () => {
@@ -419,8 +435,8 @@ const AttendanceModuleFaculty = () => {
   };
   // TIME IN AND TIME OUT END
 
-   // TIME IN AND TIME OUT HONORARUIM
-   const calculateTotalRenderedTimeHN = () => {
+  // TIME IN AND TIME OUT HONORARUIM
+  const calculateTotalRenderedTimeHN = () => {
     let totalSeconds = 0;
 
     attendanceData.forEach((row) => {
@@ -455,8 +471,8 @@ const AttendanceModuleFaculty = () => {
   };
   // TIME IN AND TIME OUT END HONORARIUM
 
-   // TIME IN AND TIME OUT ServiceCredit
-   const calculateTotalRenderedTimeSC = () => {
+  // TIME IN AND TIME OUT ServiceCredit
+  const calculateTotalRenderedTimeSC = () => {
     let totalSeconds = 0;
 
     attendanceData.forEach((row) => {
@@ -491,41 +507,41 @@ const AttendanceModuleFaculty = () => {
   };
   // TIME IN AND TIME OUT END Service Credit
 
-     // TIME IN AND TIME OUT OverTime
-     const calculateTotalRenderedTimeOT = () => {
-      let totalSeconds = 0;
-  
-      attendanceData.forEach((row) => {
-        const facultyRenderedTimeOT = !row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTimeOT === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTimeOT;
-  
-        const [hours, minutes, seconds] = facultyRenderedTimeOT.split(":").map(Number);
-        totalSeconds += hours * 3600 + minutes * 60 + seconds;
-      });
-  
-      const totalHours = Math.floor(totalSeconds / 3600);
-      const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
-      const totalSecs = totalSeconds % 60;
-  
-      return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
-    };
-  
-    const calculateTotalRenderedTimeTardinessOT = () => {
-      let totalSeconds = 0;
-  
-      attendanceData.forEach((row) => {
-        const facultyRenderedTimeTardinessOT = !row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFacultyOT === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTimeOT : row.formattedfinalcalcFacultyOT;
-  
-        const [hours, minutes, seconds] = facultyRenderedTimeTardinessOT.split(":").map(Number);
-        totalSeconds += hours * 3600 + minutes * 60 + seconds;
-      });
-  
-      const totalHours = Math.floor(totalSeconds / 3600);
-      const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
-      const totalSecs = totalSeconds % 60;
-  
-      return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
-    };
-    // TIME IN AND TIME OUT END OverTime
+  // TIME IN AND TIME OUT OverTime
+  const calculateTotalRenderedTimeOT = () => {
+    let totalSeconds = 0;
+
+    attendanceData.forEach((row) => {
+      const facultyRenderedTimeOT = !row.officialTimeIN || !row.timeOUT || row.formattedFacultyRenderedTimeOT === "NaN:NaN:NaN" ? "00:00:00" : row.formattedFacultyRenderedTimeOT;
+
+      const [hours, minutes, seconds] = facultyRenderedTimeOT.split(":").map(Number);
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    });
+
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const totalSecs = totalSeconds % 60;
+
+    return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
+  };
+
+  const calculateTotalRenderedTimeTardinessOT = () => {
+    let totalSeconds = 0;
+
+    attendanceData.forEach((row) => {
+      const facultyRenderedTimeTardinessOT = !row.officialTimeIN || !row.timeOUT || row.formattedfinalcalcFacultyOT === "NaN:NaN:NaN" ? row.formattedFacultyMaxRenderedTimeOT : row.formattedfinalcalcFacultyOT;
+
+      const [hours, minutes, seconds] = facultyRenderedTimeTardinessOT.split(":").map(Number);
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    });
+
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const totalSecs = totalSeconds % 60;
+
+    return `${String(totalHours).padStart(2, "0")}:${String(totalMinutes).padStart(2, "0")}:${String(totalSecs).padStart(2, "0")}`;
+  };
+  // TIME IN AND TIME OUT END OverTime
 
   return (
     <Container
@@ -1069,8 +1085,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                                        {calculateTotalRenderedTimeTardinessHN()}
-
+                    {calculateTotalRenderedTimeTardinessHN()}
                   </TableCell>
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (Service Credit):
@@ -1084,7 +1099,6 @@ const AttendanceModuleFaculty = () => {
                     }}
                   >
                     {calculateTotalRenderedTimeSC()}
-                    
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1094,8 +1108,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                                        {calculateTotalRenderedTimeTardinessSC()}
-                    
+                    {calculateTotalRenderedTimeTardinessSC()}
                   </TableCell>
 
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
@@ -1110,7 +1123,6 @@ const AttendanceModuleFaculty = () => {
                     }}
                   >
                     {calculateTotalRenderedTimeOT()}
-                    
                   </TableCell>
                   <TableCell
                     colSpan={1}
@@ -1120,8 +1132,7 @@ const AttendanceModuleFaculty = () => {
                       backgroundColor: "#ffd2d2",
                     }}
                   >
-                                        {calculateTotalRenderedTimeTardinessOT()}
-                    
+                    {calculateTotalRenderedTimeTardinessOT()}
                   </TableCell>
                   <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
                     Total Rendered Time (ALL Overtime):
@@ -1149,17 +1160,30 @@ const AttendanceModuleFaculty = () => {
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={2} sx={{ fontWeight: "bold", textAlign: "right" }}>
-                    Overall Rendered Time {startDate} to {endDate}:
+                    Overall Rendered Official Time <br /> {startDate} to {endDate}:
                   </TableCell>
                   <TableCell
-                    colSpan={5}
+                    colSpan={2}
                     sx={{
                       fontWeight: "bold",
-                      textAlign: "left",
-                      backgroundColor: "#ADD8E6",
+                      textAlign: "center",
+                      backgroundColor: "#bafac6",
                     }}
                   >
-                   HELLO WORD
+                    {calculateTotalRenderedTime()}
+                  </TableCell>
+                  <TableCell colSpan={3} sx={{ fontWeight: "bold", textAlign: "right" }}>
+                    Overall Tardiness Ofiicial Time <br /> {startDate} to {endDate}:
+                  </TableCell>
+                  <TableCell
+                    colSpan={2}
+                    sx={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      backgroundColor: "#ffd2d2",
+                    }}
+                  >
+                    {calculateTotalRenderedTimeTardiness()}
                   </TableCell>
                 </TableRow>
               </TableBody>

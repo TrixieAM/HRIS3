@@ -298,25 +298,86 @@ router.get("/api/dtr", (req, res) => {
 });
 
 router.post("/api/overall_attendance", (req, res) => {
-  const { employeeNumber, startDate, endDate, totalRenderedTimeMorning } = req.body;
+  const {
+    personID ,
+    startDate,
+    endDate,
+    totalRenderedTimeMorning,
+    totalRenderedTimeMorningTardiness,
+
+    totalRenderedTimeAfternoon,
+    totalRenderedTimeAfternoonTardiness,
+
+    totalRenderedHonorarium,
+    totalRenderedHonorariumTardiness,
+
+    totalRenderedServiceCredit,
+    totalRenderedServiceCreditTardiness,
+
+    totalRenderedOvertime,
+    totalRenderedOvertimeTardiness,
+
+    overallRenderedOfficialTime,
+    overallRenderedOfficialTimeTardiness,
+  } = req.body;
 
   const query = `
     INSERT INTO overall_attendance_record (
       personID, 
       startDate, 
       endDate, 
-      totalRenderedTimeMorning 
+      totalRenderedTimeMorning,
+      totalRenderedTimeMorningTardiness,
+      
+      totalRenderedTimeAfternoon,
+      totalRenderedTimeAfternoonTardiness,
 
-    ) VALUES (?, ?, ?, ?)
+      totalRenderedHonorarium,
+      totalRenderedHonorariumTardiness,
+
+      totalRenderedServiceCredit,
+      totalRenderedServiceCreditTardiness,
+
+      totalRenderedOvertime,
+      totalRenderedOvertimeTardiness,
+
+      overallRenderedOfficialTime,
+      overallRenderedOfficialTimeTardiness
+
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(query, [employeeNumber, startDate, endDate, totalRenderedTimeMorning], (error, results) => {
-    if (error) {
-      console.error("Error inserting data:", error);
-      return res.status(500).json({ message: "Database error", error });
+  db.query(
+    query,
+    [
+      personID,
+      startDate,
+      endDate,
+      totalRenderedTimeMorning,
+      totalRenderedTimeMorningTardiness,
+      totalRenderedTimeAfternoon,
+      totalRenderedTimeAfternoonTardiness,
+
+      totalRenderedHonorarium,
+      totalRenderedHonorariumTardiness,
+
+      totalRenderedServiceCredit,
+      totalRenderedServiceCreditTardiness,
+
+      totalRenderedOvertime,
+      totalRenderedOvertimeTardiness,
+
+      overallRenderedOfficialTime,
+      overallRenderedOfficialTimeTardiness,
+    ],
+    (error, results) => {
+      if (error) {
+        console.error("Error inserting data:", error);
+        return res.status(500).json({ message: "Database error", error });
+      }
+      res.status(201).json({ message: "Attendance record saved successfully", data: results });
     }
-    res.status(201).json({ message: "Attendance record saved successfully", data: results });
-  });
+  );
 });
 
 router.get("/api/overall_attendance_record", (req, res) => {
