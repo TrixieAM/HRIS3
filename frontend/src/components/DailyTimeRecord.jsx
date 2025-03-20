@@ -118,10 +118,10 @@ const DailyTimeRecord = () => {
           @media print {
             .no-print { display: none !important; }
             .header { display: none !important; }
-            .table-wrapper { display: flex; justify-content: center; width: 100rem; margin-top: 20px; margin-left: 15%}
+            .table-wrapper { display: flex; justify-content: center; width: 95rem; margin-top: 20px; margin-left: -12%;}
             
-            .table { width: 45%; margin-right: 2%; border: 1px solid black; border-collapse: collapse; }
-            .table-side-by-side {display: flex; flex-direction: column; gap: 5%}
+            .table { width: 45%; border: 1px solid black; border-collapse: collapse; }
+            .table-side-by-side {display: flex; flex-direction: row; gap: 1%}
           }
           @media print {
             .print-visible {

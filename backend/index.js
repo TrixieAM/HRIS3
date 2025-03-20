@@ -577,6 +577,25 @@ app.post("/upload-excel-faculty-official-time", (req, res) => {
   });
 });
 
+//////// ROLES
+
+app.get('/api/user-role/:user', (req, res) => {
+  const { user } = req.params;
+  const query = 'SELECT role FROM users where id = ?';
+  db.query(query, [user], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    if (results.lengt > 0) {
+      res.json({ role: results[0].role});
+    } else {
+      console.log (res);
+      res.status(400).json({ error: 'User not found' });
+    }
+  });
+});
+
 app.listen(5000, () => {
   console.log("Server runnning");
 });
