@@ -243,8 +243,8 @@ const SalaryGradeTable = () => {
                     </Button>
                     <Button
                       onClick={() => setEditSalaryGradeId(null)}
-                      variant="outlined"
-                      color="secondary"
+                      variant="contained"
+                      color="error"
                     >
                       Cancel
                     </Button>
@@ -253,15 +253,15 @@ const SalaryGradeTable = () => {
                   <>
                     <Button
                       onClick={() => setEditSalaryGradeId(record.id)}
-                      variant="outlined"
+                      variant="contained"
                       color="primary"
                     >
                       Edit
                     </Button>
                     <Button
                       onClick={() => deleteSalaryGrade(record.id)}
-                      variant="outlined"
-                      color="secondary"
+                      variant="contained"
+                      color="error"
                     >
                       Delete
                     </Button>

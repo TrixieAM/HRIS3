@@ -16,30 +16,16 @@ import {
 
 const PayrollTable = () => {
   const [payrolls, setPayrolls] = useState([]);
-  const [payroll, setPayroll] = useState({
-    name: "",
-    position: "",
-    rateNbc188: "",
-    nbc594: "",
-    increment: "",
-    grossSalary: "",
-    abs: "",
-    d: "",
-    h: "",
-    m: "",
-    netSalary: "",
-    withholdingTax: "",
-    totalGsisDeds: "",
-    totalPagibigDeds: "",
-    philhealth: "",
-    totalOtherDeds: "",
-    totalDeductions: "",
-    pay1st: "",
-    pay2nd: "",
-    rtIns: "",
-    ec: "",
-    pagibig: "",
-  });
+  const [payroll, setPayroll] = useState(
+    Object.fromEntries(
+      [
+        "name", "position", "rateNbc188", "nbc594", "increment", "grossSalary",
+        "abs", "d", "h", "m", "netSalary", "withholdingTax", "totalGsisDeds",
+        "totalPagibigDeds", "philhealth", "totalOtherDeds", "totalDeductions",
+        "pay1st", "pay2nd", "rtIns", "ec", "pagibig"
+      ].map((key) => [key, ""])
+    )
+  );
 
   const [editingId, setEditingId] = useState(null);
 
@@ -96,30 +82,11 @@ const PayrollTable = () => {
   };
 
   const resetForm = () => {
-    setPayroll({
-      name: "",
-      position: "",
-      rateNbc188: "",
-      nbc594: "",
-      increment: "",
-      grossSalary: "",
-      abs: "",
-      d: "",
-      h: "",
-      m: "",
-      netSalary: "",
-      withholdingTax: "",
-      totalGsisDeds: "",
-      totalPagibigDeds: "",
-      philhealth: "",
-      totalOtherDeds: "",
-      totalDeductions: "",
-      pay1st: "",
-      pay2nd: "",
-      rtIns: "",
-      ec: "",
-      pagibig: "",
-    });
+    setPayroll(
+      Object.fromEntries(
+        Object.keys(payroll).map((key) => [key, ""])
+      )
+    );
   };
 
   return (
@@ -152,28 +119,9 @@ const PayrollTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Position</TableCell>
-              <TableCell>Rate NBC 188</TableCell>
-              <TableCell>NBC 594</TableCell>
-              <TableCell>Increment</TableCell>
-              <TableCell>Gross Salary</TableCell>
-              <TableCell>ABS</TableCell>
-              <TableCell>D</TableCell>
-              <TableCell>H</TableCell>
-              <TableCell>M</TableCell>
-              <TableCell>Net Salary</TableCell>
-              <TableCell>Withholding Tax</TableCell>
-              <TableCell>Total GSIS Deductions</TableCell>
-              <TableCell>Total Pagibig Deductions</TableCell>
-              <TableCell>Philhealth</TableCell>
-              <TableCell>Total Other Deductions</TableCell>
-              <TableCell>Total Deductions</TableCell>
-              <TableCell>1st Pay</TableCell>
-              <TableCell>2nd Pay</TableCell>
-              <TableCell>RT Insurance</TableCell>
-              <TableCell>EC</TableCell>
-              <TableCell>Pagibig</TableCell>
+              {Object.keys(payroll).map((key) => (
+                <TableCell key={key}>{key.replace(/([A-Z])/g, " $1").trim()}</TableCell>
+              ))}
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -181,28 +129,9 @@ const PayrollTable = () => {
             {payrolls.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.position}</TableCell>
-                <TableCell>{item.rateNbc188}</TableCell>
-                <TableCell>{item.nbc594}</TableCell>
-                <TableCell>{item.increment}</TableCell>
-                <TableCell>{item.grossSalary}</TableCell>
-                <TableCell>{item.abs}</TableCell>
-                <TableCell>{item.d}</TableCell>
-                <TableCell>{item.h}</TableCell>
-                <TableCell>{item.m}</TableCell>
-                <TableCell>{item.netSalary}</TableCell>
-                <TableCell>{item.withholdingTax}</TableCell>
-                <TableCell>{item.totalGsisDeds}</TableCell>
-                <TableCell>{item.totalPagibigDeds}</TableCell>
-                <TableCell>{item.philhealth}</TableCell>
-                <TableCell>{item.totalOtherDeds}</TableCell>
-                <TableCell>{item.totalDeductions}</TableCell>
-                <TableCell>{item.pay1st}</TableCell>
-                <TableCell>{item.pay2nd}</TableCell>
-                <TableCell>{item.rtIns}</TableCell>
-                <TableCell>{item.ec}</TableCell>
-                <TableCell>{item.pagibig}</TableCell>
+                {Object.keys(payroll).map((key) => (
+                  <TableCell key={key}>{item[key]}</TableCell>
+                ))}
                 <TableCell>
                   <Button onClick={() => handleEdit(item)} variant="contained" color="primary" sx={{ marginRight: 1 }}>
                     Edit

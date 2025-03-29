@@ -124,7 +124,6 @@ const DepartmentTable = () => {
               <TableCell>NO.</TableCell>
               <TableCell>CODE</TableCell>
               <TableCell>DESCRIPTION</TableCell>
-              <TableCell>CREATED AT</TableCell>
               <TableCell>ACTIONS</TableCell>
             </TableRow>
           </TableHead>
@@ -134,7 +133,6 @@ const DepartmentTable = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.code}</TableCell>
                 <TableCell>{item.description}</TableCell>
-                <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEdit(item)} variant="outlined" sx={{ mr: 1 }}>
                     Edit

@@ -117,7 +117,6 @@ const DepartmentAssignment = () => {
               <TableCell>NO.</TableCell>
               <TableCell>Department ID</TableCell>
               <TableCell>Employee ID</TableCell>
-              <TableCell>Created At</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -127,7 +126,6 @@ const DepartmentAssignment = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.department_id}</TableCell>
                 <TableCell>{item.employeeID}</TableCell>
-                <TableCell>{item.created_at}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEdit(item)}>Edit</Button>
                   <Button onClick={() => handleDelete(item.id)}>Delete</Button>

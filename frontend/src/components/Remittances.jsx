@@ -173,7 +173,6 @@ const Remittances = () => {
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Name</TableCell>
-
               <TableCell>With Holding Tax</TableCell>
               <TableCell>Personal Life Ret</TableCell>
               <TableCell>Gsis Salaray Loan</TableCell>

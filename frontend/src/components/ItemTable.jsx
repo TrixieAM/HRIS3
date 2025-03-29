@@ -113,7 +113,6 @@ const ItemTable = () => {
             <TableCell>Employee ID</TableCell>
             <TableCell>Item Code</TableCell>
             <TableCell>Salary Grade</TableCell>
-            <TableCell>Created At</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -189,7 +188,6 @@ const ItemTable = () => {
                   record.salary_grade
                 )}
               </TableCell>
-              <TableCell>{record.dateCreated ? new Date(record.dateCreated).toLocaleString() : "N/A"}</TableCell> {/* Fixed "Invalid Date" */}
               <TableCell>
                 {editItemId === record.id ? (
                   <>
