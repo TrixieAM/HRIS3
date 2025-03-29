@@ -596,6 +596,845 @@ app.get('/api/user-role/:user', (req, res) => {
   });
 });
 
+
+///////// PAYROLL
+
+// Get all payroll
+app.get("/api/payroll", (req, res) => {
+  db.query("SELECT * FROM payroll", (err, result) => {
+      if (err) {
+          res.status(500).send(err);
+      } else {
+          res.json(result);
+      }
+  });
+});
+
+// Add
+app.post("/api/payroll", (req, res) => {
+  const {
+      name, position, rateNbc188, nbc594, increment, grossSalary, abs, d, h, m,
+      netSalary, withholdingTax, totalGsisDeds, totalPagibigDeds, philhealth,
+      totalOtherDeds, totalDeductions, pay1st, pay2nd, rtIns, ec, pagibig
+  } = req.body;
+
+  const sql = `
+      INSERT INTO payroll 
+      (name, position, rateNbc188, nbc594, increment, grossSalary, abs, d, h, m, 
+       netSalary, withholdingTax, totalGsisDeds, totalPagibigDeds, philhealth, 
+       totalOtherDeds, totalDeductions, pay1st, pay2nd, rtIns, ec, pagibig) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [
+      name, position, rateNbc188, nbc594, increment, grossSalary, abs, d, h, m,
+      netSalary, withholdingTax, totalGsisDeds, totalPagibigDeds, philhealth,
+      totalOtherDeds, totalDeductions, pay1st, pay2nd, rtIns, ec, pagibig
+  ], (err, result) => {
+      if (err) {
+          res.status(500).send(err);
+      } else {
+          res.json({ message: "Payroll record added successfully", id: result.insertId });
+      }
+  });
+});
+
+// Update
+app.put("/api/payroll/:id", (req, res) => {
+  const { id } = req.params;
+  const {
+    name, position, rateNbc188, nbc594, increment, grossSalary, abs, d, h, m,
+    netSalary, withholdingTax, totalGsisDeds, totalPagibigDeds, philhealth,
+    totalOtherDeds, totalDeductions, pay1st, pay2nd, rtIns, ec, pagibig
+  } = req.body;
+
+  const sql = `UPDATE payroll SET 
+    name=?, position=?, rateNbc188=?, nbc594=?, increment=?, grossSalary=?, abs=?, d=?, h=?, m=?,
+    netSalary=?, withholdingTax=?, totalGsisDeds=?, totalPagibigDeds=?, philhealth=?,
+    totalOtherDeds=?, totalDeductions=?, pay1st=?, pay2nd=?, rtIns=?, ec=?, pagibig=? 
+    WHERE id=?`;
+
+  db.query(sql, [
+    name, position, rateNbc188, nbc594, increment, grossSalary, abs, d, h, m,
+    netSalary, withholdingTax, totalGsisDeds, totalPagibigDeds, philhealth,
+    totalOtherDeds, totalDeductions, pay1st, pay2nd, rtIns, ec, pagibig, id
+  ], (err, result) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: "Payroll record updated successfully" });
+  });
+});
+
+// delete
+app.delete("/api/payroll/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM payroll WHERE id=?", [id], (err, result) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: "Payroll record deleted successfully" });
+  });
+});
+
+
+//////// REMITTANCE
+
+// Get all remittance records
+app.get('/api/remittance', (req, res) => {
+  db.query('SELECT * FROM remittances', (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// Add a new remittance record
+app.post('/api/remittance', (req, res) => {
+  const {
+    name,
+    withHoldingTax,
+    personalLifeRet,
+    gsisSalarayLoan,
+    gsisPolicyLoan,
+    gfal,
+    cpl,
+    mpl,
+    mplLite,
+    emergencyLoan,
+    totalGsisDeds,
+    pagibigFundCont,
+    pagibig2,
+    multiPurpLoan,
+    totalPagibigDeds,
+    philhealth,
+    disallowance,
+    landbankSalaryLoan,
+    earistCreditCoop,
+    feu,
+    mtslaSalaryLoan,
+    savingAndLoan,
+    totalOtherDeds,
+    totalDeds,
+  } = req.body;
+
+  const sql = `
+      INSERT INTO remittances
+      ( name,
+    withHoldingTax,
+    personalLifeRet,
+    gsisSalarayLoan,
+    gsisPolicyLoan,
+    gfal,
+    cpl,
+    mpl,
+    mplLite,
+    emergencyLoan,
+    totalGsisDeds,
+    pagibigFundCont,
+    pagibig2,
+    multiPurpLoan,
+    totalPagibigDeds,
+    philhealth,
+    disallowance,
+    landbankSalaryLoan,
+    earistCreditCoop,
+    feu,
+    mtslaSalaryLoan,
+    savingAndLoan,
+    totalOtherDeds,
+    totalDeds)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [
+      name,
+      withHoldingTax,
+      personalLifeRet,
+      gsisSalarayLoan,
+      gsisPolicyLoan,
+      gfal,
+      cpl,
+      mpl,
+      mplLite,
+      emergencyLoan,
+      totalGsisDeds,
+      pagibigFundCont,
+      pagibig2,
+      multiPurpLoan,
+      totalPagibigDeds,
+      philhealth,
+      disallowance,
+      landbankSalaryLoan,
+      earistCreditCoop,
+      feu,
+      mtslaSalaryLoan,
+      savingAndLoan,
+      totalOtherDeds,
+      totalDeds,
+    ],
+    (err, result) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.json({
+          message: 'Remittance record added successfully',
+          id: result.insertId,
+        });
+      }
+    }
+  );
+});
+
+// Update a remittances record
+app.put('/api/remittance/:id', (req, res) => {
+  const { id } = req.params;
+  const {
+    name,
+    withHoldingTax,
+    personalLifeRet,
+    gsisSalarayLoan,
+    gsisPolicyLoan,
+    gfal,
+    cpl,
+    mpl,
+    mplLite,
+    emergencyLoan,
+    totalGsisDeds,
+    pagibigFundCont,
+    pagibig2,
+    multiPurpLoan,
+    totalPagibigDeds,
+    philhealth,
+    disallowance,
+    landbankSalaryLoan,
+    earistCreditCoop,
+    feu,
+    mtslaSalaryLoan,
+    savingAndLoan,
+    totalOtherDeds,
+    totalDeds,
+  } = req.body;
+
+  const sql = `UPDATE remittances SET
+      name = ?,
+      withHoldingTax = ?,
+      personalLifeRet= ?,
+      gsisSalarayLoan= ?,
+      gsisPolicyLoan= ?,
+      gfal= ?,
+      cpl= ?,
+      mpl= ?,
+      mplLite= ?,
+      emergencyLoan= ?,
+      totalGsisDeds= ?,
+      pagibigFundCont= ?,
+      pagibig2= ?,
+      multiPurpLoan= ?,
+      totalPagibigDeds= ?,
+      philhealth= ?,
+      disallowance= ?,
+      landbankSalaryLoan= ?,
+      earistCreditCoop= ?,
+      feu= ?,
+      mtslaSalaryLoan= ?,
+      savingAndLoan= ?,
+      totalOtherDeds= ?,
+      totalDeds= ?
+    WHERE id=?`;
+
+  db.query(
+    sql,
+    [
+      name,
+      withHoldingTax,
+      personalLifeRet,
+      gsisSalarayLoan,
+      gsisPolicyLoan,
+      gfal,
+      cpl,
+      mpl,
+      mplLite,
+      emergencyLoan,
+      totalGsisDeds,
+      pagibigFundCont,
+      pagibig2,
+      multiPurpLoan,
+      totalPagibigDeds,
+      philhealth,
+      disallowance,
+      landbankSalaryLoan,
+      earistCreditCoop,
+      feu,
+      mtslaSalaryLoan,
+      savingAndLoan,
+      totalOtherDeds,
+      totalDeds,
+      id,
+    ],
+    (err) => {
+      if (err) res.status(500).send(err);
+      else res.json({ message: 'Remittance record updated successfully' });
+    }
+  );
+});
+
+app.delete('/api/remittance/:id', (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM remittances WHERE id=?', [id], (err) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: 'Remittance record deleted successfully' });
+  });
+});
+
+/////// ITEM-TABLE
+
+// Get all records (Include `dateCreated`)
+app.get("/api/item-table", (req, res) => {
+  const sql = `SELECT id, item_description, employeeID, item_code, salary_grade, dateCreated FROM item_table`;
+  
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Database Query Error:", err.message);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    res.json(result);
+  });
+});
+
+// Add new item (`dateCreated` is automatic)
+app.post("/api/item-table", (req, res) => {
+  const { item_description, employeeID, item_code, salary_grade } = req.body;
+
+  const sql = `
+      INSERT INTO item_table (item_description, employeeID, item_code, salary_grade)
+      VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [item_description, employeeID, item_code, salary_grade], (err, result) => {
+    if (err) {
+      console.error("Database Insert Error:", err.message);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    res.json({ message: "Item record added successfully", id: result.insertId });
+  });
+});
+
+// Update item (`dateCreated` remains unchanged)
+app.put("/api/item-table/:id", (req, res) => {
+  const { id } = req.params;
+  const { item_description, employeeID, item_code, salary_grade } = req.body;
+
+  const sql = `
+    UPDATE item_table SET
+      item_description = ?,
+      employeeID = ?,
+      item_code = ?,
+      salary_grade = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [item_description, employeeID, item_code, salary_grade, id], (err, result) => {
+    if (err) {
+      console.error("Database Update Error:", err.message);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    res.json({ message: "Item record updated successfully" });
+  });
+});
+
+// Delete item
+app.delete("/api/item-table/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM item_table WHERE id = ?", [id], (err, result) => {
+    if (err) {
+      console.error("Database Delete Error:", err.message);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    res.json({ message: "Item record deleted successfully" });
+  });
+});
+
+
+// SALARY GRADE TABLE START
+// Create
+app.post('/salary-grade', (req, res) => {
+  const { effectivityDate, sg_number, step1, step2, step3, step4, step5, step6, step7, step8 } = req.body;
+ 
+  const query = 'INSERT INTO salary_grade_table (effectivityDate, sg_number, step1, step2, step3, step4, step5, step6, step7, step8) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [effectivityDate, sg_number, step1, step2, step3, step4, step5, step6, step7, step8];
+ 
+  db.query(query, values, (err, results) => {
+    if (err) {
+      console.error('Error inserting data:', err);
+      res.status(500).send('Error inserting data');
+    } else {
+      res.status(200).send('Salary grade added successfully');
+    }
+  });
+});
+
+
+// Read (Get all records)
+app.get('/salary-grade', (req, res) => {
+  const query = 'SELECT * FROM salary_grade_table';
+ 
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching data:', err);
+      res.status(500).send('Error fetching data');
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+
+// Update (Update a record by ID)
+app.put('/salary-grade/:id', (req, res) => {
+  const { id } = req.params;
+  const { effectivityDate, sg_number, step1, step2, step3, step4, step5, step6, step7, step8 } = req.body;
+ 
+  const query = 'UPDATE salary_grade_table SET effectivityDate = ?, sg_number = ?, step1 = ?, step2 = ?, step3 = ?, step4 = ?, step5 = ?, step6 = ?, step7 = ?, step8 = ? WHERE id = ?';
+  const values = [effectivityDate, sg_number, step1, step2, step3, step4, step5, step6, step7, step8, id];
+ 
+  db.query(query, values, (err, results) => {
+    if (err) {
+      console.error('Error updating data:', err);
+      res.status(500).send('Error updating data');
+    } else {
+      res.status(200).send('Salary grade updated successfully');
+    }
+  });
+});
+
+
+// Delete (Delete a record by ID)
+app.delete('/salary-grade/:id', (req, res) => {
+  const { id } = req.params;
+ 
+  const query = 'DELETE FROM salary_grade_table WHERE id = ?';
+ 
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error deleting data:', err);
+      res.status(500).send('Error deleting data');
+    } else {
+      res.status(200).send('Salary grade deleted successfully');
+    }
+  });
+});
+
+
+//SALARY GRADE TABLE END
+
+
+// Get all records
+app.get("/api/salary-grade-status", (req, res) => {
+  db.query("SELECT * FROM salary_grade_status", (err, result) => {
+    if (err) res.status(500).send(err);
+    else res.json(result);
+  });
+});
+
+// Add a new record
+app.post("/api/salary-grade-status", (req, res) => {
+  const { effectivityDate, step_number, status } = req.body;
+
+  const sql = `
+    INSERT INTO salary_grade_status (effectivityDate, step_number, status)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [effectivityDate, step_number, status], (err, result) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: "Record added successfully", id: result.insertId });
+  });
+});
+
+// Update a record
+app.put("/api/salary-grade-status/:id", (req, res) => {
+  const { id } = req.params;
+  const { effectivityDate, step_number, status } = req.body;
+
+  const sql = `
+    UPDATE salary_grade_status 
+    SET effectivityDate = ?, step_number = ?, status = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [effectivityDate, step_number, status, id], (err) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: "Record updated successfully" });
+  });
+});
+
+// Delete a record
+app.delete("/api/salary-grade-status/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query("DELETE FROM salary_grade_status WHERE id = ?", [id], (err) => {
+    if (err) res.status(500).send(err);
+    else res.json({ message: "Record deleted successfully" });
+  });
+});
+
+
+// Get all department table
+app.get('/api/department-table', (req, res) => {
+  db.query('SELECT * FROM department_table', (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.json(results);
+  });
+});
+
+
+// Get a single department table by ID
+app.get('/api/department-table/:id', (req, res) => {
+  const { id } = req.params;
+  db.query('SELECT * FROM department_table WHERE id = ?', [id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      if (result.length === 0) return res.status(404).send('Department not found');
+      res.json(result[0]);
+  });
+});
+
+
+// Add a new department table
+app.post('/api/department-table', (req, res) => {
+  const { code, description } = req.body;
+  if (!code || !description) return res.status(400).send('Code and description are required');
+
+
+  const sql = `INSERT INTO department_table (code, description) VALUES (?, ?)`;
+  db.query(sql, [code, description], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.status(201).json({ id: result.insertId, code, description });
+  });
+});
+
+
+// Update a department table
+app.put('/api/department-table/:id', (req, res) => {
+  const { id } = req.params;
+  const { code, description } = req.body;
+
+
+  const sql =`UPDATE department_table SET code = ?, description = ? WHERE id = ?`;
+  db.query(sql, [code, description, id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.send('Department updated successfully');
+  });
+});
+
+
+// Delete a department table
+app.delete('/api/department-table/:id', (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM department_table WHERE id = ?', [id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.send('Department deleted successfully');
+  });
+});
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Get all department Assignment
+app.get('/api/department-assignment', (req, res) => {
+  db.query('SELECT * FROM department_assignment', (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.json(results);
+  });
+});
+
+
+
+
+// Get a single department assignment by ID
+app.get('/api/department-assignment/:id', (req, res) => {
+  const { id } = req.params;
+  db.query('SELECT * FROM department_assignment WHERE id = ?', [id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      if (result.length === 0) return res.status(404).send('Department not found');
+      res.json(result[0]);
+  });
+});
+
+
+// Add a new department assignment
+app.post('/api/department-assignment', (req, res) => {
+  const { department_id, employeeID } = req.body;
+  if (!department_id || !employeeID) return res.status(400).send('Code and description are required');
+
+
+  const sql = `INSERT INTO department_assignment (department_id, employeeID) VALUES (?, ?)`;
+  db.query(sql, [department_id, employeeID], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.status(201).json({ id: result.insertId, department_id, employeeID });
+  });
+});
+
+
+// Update a department assignment
+app.put('/api/department-assignment/:id', (req, res) => {
+  const { id } = req.params;
+  const { department_id, employeeID } = req.body;
+
+
+  const sql =`UPDATE department_assignment SET department_id = ?, employeeID = ? WHERE id = ?`;
+  db.query(sql, [department_id, employeeID, id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.send('Department updated successfully');
+  });
+});
+
+
+// Delete a department assigenment
+app.delete('/api/department-assignment/:id', (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM department_assignment WHERE id = ?', [id], (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.send('Department deleted successfully');
+  });
+});
+
+// LEAVE
+
+app.get('/leave', (req, res) => {
+  const sql = `SELECT * FROM leave_table`;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Database Query Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.json(result);
+  });
+});
+
+
+app.post('/leave', (req, res) => {
+  const { leave_code, description, number_hours, status } = req.body;
+
+  if (!leave_code) {
+    return res.status(400).json({ error: 'Leave code is required' });
+  }
+
+  const sql = `INSERT INTO leave_table (leave_code, description, number_hours, status) VALUES (?,?,?,?)`;
+  db.query(sql, [leave_code, description, number_hours, status], (err, result) => {
+    if (err) {
+      console.error('Database Insert Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.status(201).json({
+      message: 'Leave record added successfully',
+      id: result.insertId,
+    });
+  });
+});
+
+
+app.put('/leave/:id', (req, res) => {
+  const { id } = req.params;
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const { leave_code, description, number_hours, status } = req.body;
+
+  if (!leave_code) {
+    return res.status(400).json({ error: 'Leave code is required' });
+  }
+
+  const sql = `UPDATE leave_table SET leave_code = ?, description = ?, number_hours = ?, status = ? WHERE id = ?`;
+  db.query(sql, [leave_code, description, number_hours, status, id], (err, result) => {
+    if (err) {
+      console.error('Database Update Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Leave record not found' });
+    }
+
+    res.json({ message: 'Leave record updated successfully' });
+  });
+});
+
+
+app.delete('/leave/:id', (req, res) => {
+  const { id } = req.params;
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const sql = `DELETE FROM leave_table WHERE id = ?`;
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Database Delete Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Leave record not found' });
+    }
+
+    res.json({ message: 'Leave record deleted successfully' });
+  });
+});
+
+
+
+//LEAVE ASSIGNMENT START
+// CREATE Leave Assignment
+app.post("/leave_assignment", (req, res) => {
+  const { employeeID, leaveID, noOfLeaves } = req.body;
+  const sql = "INSERT INTO leave_assignment (employeeID, leaveID, noOfLeaves) VALUES (?, ?, ?)";
+  db.query(sql, [employeeID, leaveID, noOfLeaves], (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.status(201).json({ message: "Leave Assignment Created", id: result.insertId });
+  });
+});
+
+
+// READ Leave Assignments
+app.get("/leave_assignment", (req, res) => {
+  const sql = "SELECT * FROM leave_assignment";
+  db.query(sql, (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+  });
+});
+
+
+// UPDATE Leave Assignment
+app.put("/leave_assignment/:id", (req, res) => {
+  const { id } = req.params;
+  const { employeeID, leaveID, noOfLeaves } = req.body;
+  const sql = "UPDATE leave_assignment SET employeeID=?, leaveID=?, noOfLeaves=? WHERE id=?";
+  db.query(sql, [employeeID, leaveID, noOfLeaves, id], (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json({ message: "Leave Assignment Updated" });
+  });
+});
+
+
+// DELETE Leave Assignment
+app.delete("/leave_assignment/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM leave_assignment WHERE id=?";
+  db.query(sql, [id], (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json({ message: "Leave Assignment Deleted" });
+  });
+});
+
+
+
+// HOLIDAY
+
+app.get('/holiday-suspension', (req, res) => {
+  const sql = `SELECT * FROM holidayandsuspension`;
+  
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Database Query Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.json(result);
+  });
+});
+
+
+
+app.post('/holiday-suspension', (req, res) => {
+  const { description, date, status } = req.body;
+
+  if (!description) {
+    return res.status(400).json({ error: 'Description is required' });
+  }
+
+  const sql = `INSERT INTO holidayandsuspension (description, date, status) VALUES (?, ?, ?)`;
+  db.query(sql, [description, date, status], (err, result) => {
+    if (err) {
+      console.error('Database Insert Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.status(201).json({
+      message: 'Holiday and Suspension record added successfully',
+      id: result.insertId,
+    });
+  });
+});
+
+
+
+app.put('/holiday-suspension/:id', (req, res) => {
+  const { id } = req.params;
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const { description, date, status } = req.body;
+  if (!description) {
+    return res.status(400).json({ error: 'Description is required' });
+  }
+
+  const sql = `UPDATE holidayandsuspension SET description = ?, date = ?, status = ? WHERE id = ?`;
+  db.query(sql, [description, date, status, id], (err, result) => {
+    if (err) {
+      console.error('Database Update Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Holiday suspension record not found' });
+    }
+
+    res.json({ message: 'Holiday suspension record updated successfully' });
+  });
+});
+
+
+
+app.delete('/holiday-suspension/:id', (req, res) => {
+  const { id } = req.params;
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const sql = `DELETE FROM holidayandsuspension WHERE id = ?`;
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Database Delete Error:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Holiday suspension record not found' });
+    }
+
+    res.json({ message: 'Holiday suspension record deleted successfully' });
+  });
+});
+
+
+
+
+
+
 app.listen(5000, () => {
   console.log("Server runnning");
 });

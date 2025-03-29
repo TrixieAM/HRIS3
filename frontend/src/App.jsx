@@ -27,12 +27,23 @@ import AttendanceForm from "./components/AllAttendanceRecord";
 import AttendanceSearch from "./components/ViewAttendance";
 import AttendanceModule from "./components/AttendanceModule";
 import AttendanceModuleFaculty from "./components/AttendanceModuleFaculty";
+import AttendanceModuleFaculty40 from "./components/AttendanceModuleFaculty40hrs";
 import OverallAttendancePage from "./components/OverallAttendance";
 import PDS1 from "./components/PDS1";
 import PDS2 from "./components/PDS2";
 import PDS3 from "./components/PDS3";
 import PDS4 from "./components/PDS4";
 import OfficialTimeForm from "./components/OfficialTimeForm";
+import PayrollTable from "./components/PayrollTable";
+import Remittances from "./components/Remittances";
+import ItemTable from "./components/ItemTable";
+import SalaryGradeTable from "./components/SalaryGradeTable";
+import SalaryGradeStatusTable from "./components/SalaryGradeStatusTable";
+import DepartmentTable from "./components/DepartmentTable";
+import DepartmentAssignment from "./components/DepartmentAssignment";
+import HolidaySuspension from "./components/HolidaySuspension";
+import Leave from "./components/Leave";
+import LeaveAssignment from "./components/LeaveAssignment";
 
 const drawerWidth = 280;
 
@@ -40,10 +51,12 @@ function App() {
   const [settings, setSettings] = useState({});
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
   const location = useLocation(); 
 
   const handleClick = () => setOpen(!open);
   const handleClickAttendance = () => setOpen2(!open2);
+  const handleClickPayroll = () => setOpen3(!open3);
 
   const fetchSettings = async () => {
     try {
@@ -74,7 +87,7 @@ function App() {
         </AppBar>
 
         {!["/", "/login", "/Register"].includes(location.pathname) && (
-          <Sidebar open={open} handleClick={handleClick} open2={open2} handleClickAttendance={handleClickAttendance} />
+          <Sidebar open={open} handleClick={handleClick} open2={open2} handleClickAttendance={handleClickAttendance}  open3={open3} handleClickPayroll={handleClickPayroll}/>
         )}
 
           {/* Main Content */}
@@ -228,6 +241,16 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+<Route
+                path="/attendance_module_faculty_40hrs"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <AttendanceModuleFaculty40 />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/attendance_summary"
                 element={
@@ -284,6 +307,99 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+               <Route
+                path="/payroll-table"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <PayrollTable />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/remittance-table"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <Remittances />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/item-table"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <ItemTable />
+                  </ProtectedRoute>
+                }
+              />
+
+               <Route
+                path="/salary-grade"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <SalaryGradeTable />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/salary-grade-status"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <SalaryGradeStatusTable />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/department-table"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <DepartmentTable />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/department-assignment"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <DepartmentAssignment />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/leave-table"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <Leave />
+                  </ProtectedRoute>
+                }
+              />
+
+               <Route
+                path="/leave-assignment"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <LeaveAssignment />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/holiday-suspension"
+                element={
+                  <ProtectedRoute allowedRoles={["administrator", "superadmin"]}>
+                    <HolidaySuspension />
+                  </ProtectedRoute>
+                }
+              />
+
+
+
               <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
           </Box>
