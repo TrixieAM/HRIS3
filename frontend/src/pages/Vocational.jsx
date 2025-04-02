@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   Button,
   Table,
@@ -12,30 +12,38 @@ import {
   Typography,
   Grid,
   Paper,
-} from "@mui/material";
-
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
 const Vocational = () => {
   const [vocationalData, setVocationalData] = useState([]);
   const [newVocational, setNewVocational] = useState({
-    vocationalNameOfSchool: "",
-    vocationalDegree: "",
-    vocationalPeriodFrom: "",
-    vocationalPeriodTo: "",
-    vocationalHighestAttained: "",
-    vocationalYearGraduated: "",
+    vocationalNameOfSchool: '',
+    vocationalDegree: '',
+    vocationalPeriodFrom: '',
+    vocationalPeriodTo: '',
+    vocationalHighestAttained: '',
+    vocationalYearGraduated: '',
   });
   const [editVocationalId, setEditVocationalId] = useState(null); // Store only the ID of the record being edited
+
 
   useEffect(() => {
     fetchVocationalData();
   }, []);
 
+
   const fetchVocationalData = async () => {
     const response = await axios.get(
-      "http://localhost:5000/vocational/vocational_table"
+      'http://localhost:5000/vocational/vocational_table'
     );
     setVocationalData(response.data);
   };
+
 
   const addVocationalData = async () => {
     if (
@@ -46,24 +54,25 @@ const Vocational = () => {
       !newVocational.vocationalPeriodTo ||
       !newVocational.vocationalYearGraduated
     ) {
-      console.log("All field are required");
+      console.log('All field are required');
       return;
     } else {
       await axios.post(
-        "http://localhost:5000/vocational/vocational_table",
+        'http://localhost:5000/vocational/vocational_table',
         newVocational
       );
     }
     setNewVocational({
-      vocationalNameOfSchool: "",
-      vocationalDegree: "",
-      vocationalPeriodFrom: "",
-      vocationalPeriodTo: "",
-      vocationalHighestAttained: "",
-      vocationalYearGraduated: "",
+      vocationalNameOfSchool: '',
+      vocationalDegree: '',
+      vocationalPeriodFrom: '',
+      vocationalPeriodTo: '',
+      vocationalHighestAttained: '',
+      vocationalYearGraduated: '',
     });
     fetchVocationalData();
   };
+
 
   const updateVocationalData = async (id) => {
     const recordToUpdate = vocationalData.find((record) => record.id === id);
@@ -75,6 +84,7 @@ const Vocational = () => {
     fetchVocationalData();
   };
 
+
   const deleteVocationalData = async (id) => {
     await axios.delete(
       `http://localhost:5000/vocational/vocational_table/${id}`
@@ -82,41 +92,47 @@ const Vocational = () => {
     fetchVocationalData();
   };
 
+
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+
   const handleFileUpload = async () => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
+
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/vocational/upload_vocational",
+        'http://localhost:5000/vocational/upload_vocational',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
       setMessage(response.data.message);
       fetchVocationalData();
     } catch (error) {
-      console.error("Error uploading file:", error);
-      setMessage("File upload failed");
+      console.error('Error uploading file:', error);
+      setMessage('File upload failed');
     }
   };
 
+
   return (
     <Container>
-      <h1 style={{ width: "90%" }}>Vocational Information</h1>
+      <h1 style={{ width: '90%' }}>Vocational Information</h1>
+
 
       {/* Add New Vocational Record */}
-      <Paper elevation={2} style={{ padding: "16px", marginBottom: "24px" }}>
+      <Paper elevation={2} style={{ padding: '16px', marginBottom: '24px' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -199,19 +215,28 @@ const Vocational = () => {
           <Grid item xs={1}>
             <Button
               onClick={addVocationalData}
-              sx={{ width: "100%" }}
+              sx={{
+                width: '100px',
+                backgroundColor: '#6c0b19',
+              }}
               variant="contained"
               color="primary"
+              startIcon={<AddIcon />}
             >
               Add
             </Button>
           </Grid>
           <Grid item xs={8.85}>
             <Button
-              style={{ backgroundColor: "green", color: "white" }}
+              style={{
+                backgroundColor: '#6c0b19',
+                color: 'white',
+                marginLeft: '10px',
+              }}
               onClick={handleFileUpload}
               variant="contained"
               color="primary"
+              startIcon={<UploadIcon />}
             >
               Upload
             </Button>
@@ -219,12 +244,13 @@ const Vocational = () => {
           <Grid
             item
             xs={1}
-            sx={{ display: "flex", alignItems: "center", marginTop: "6px" }}
+            sx={{ display: 'flex', alignItems: 'center', marginTop: '6px' }}
           >
             <input type="file" onChange={handleFileChange} />
           </Grid>
         </Grid>
       </Paper>
+
 
       {/* Vocational Table */}
       <Table>
@@ -380,6 +406,7 @@ const Vocational = () => {
                 )}
               </TableCell>
 
+
               <TableCell>
                 {editVocationalId === record.id ? (
                   <>
@@ -387,6 +414,8 @@ const Vocational = () => {
                       onClick={() => updateVocationalData(record.id)}
                       variant="contained"
                       color="primary"
+                      sx={{ backgroundColor: '#6c0b19' }}
+                      startIcon={<SaveIcon />}
                     >
                       Update
                     </Button>
@@ -394,6 +423,12 @@ const Vocational = () => {
                       onClick={() => setEditVocationalId(null)}
                       variant="outlined"
                       color="secondary"
+                      sx={{
+                        backgroundColor: '#000000',
+                        color: 'white',
+                        marginTop: '5px',
+                      }}
+                      startIcon={<CancelIcon />}
                     >
                       Cancel
                     </Button>
@@ -404,6 +439,13 @@ const Vocational = () => {
                       onClick={() => setEditVocationalId(record.id)}
                       variant="outlined"
                       color="primary"
+                      sx={{
+                        backgroundColor: '#6c0b19',
+                        color: 'white',
+                        width: '100px',
+                        marginRight: '5px',
+                      }}
+                      startIcon={<EditIcon />}
                     >
                       Edit
                     </Button>
@@ -411,6 +453,12 @@ const Vocational = () => {
                       onClick={() => deleteVocationalData(record.id)}
                       variant="outlined"
                       color="secondary"
+                      sx={{
+                        backgroundColor: '#000000',
+                        color: 'white',
+                        width: '100px',
+                      }}
+                      startIcon={<DeleteIcon />}
                     >
                       Delete
                     </Button>
@@ -425,4 +473,10 @@ const Vocational = () => {
   );
 };
 
+
 export default Vocational;
+
+
+
+
+

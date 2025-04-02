@@ -22,6 +22,7 @@ const OtherInformation = require("./dashboardRoutes/OtherSkills");
 const AllData = require("./dashboardRoutes/DataRoute");
 const Attendance = require("./dashboardRoutes/Attendance");
 
+
 const app = express();
 
 //MIDDLEWARE

@@ -1,263 +1,370 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Button,
-  Box,
-  TextField,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Container,
-} from "@mui/material";
+  Typography,
+  Grid,
+  Paper,
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
+
 
 const ChildrenInfo = () => {
-  // State for children and employees data
+  // State for children data
   const [children, setChildren] = useState([]);
+
 
   // State for new child entry
   const [newChild, setNewChild] = useState({
-    childrenFirstName: "",
-    childrenMiddleName: "",
-    childrenLastName: "",
-    childrenNameExtension: "",
-    dateOfBirth: "",
-    person_id: "",
+    childrenFirstName: '',
+    childrenMiddleName: '',
+    childrenLastName: '',
+    childrenNameExtension: '',
+    dateOfBirth: '',
+    person_id: '',
   });
 
-  // State for editing child and employee IDs
-  const [editingChildId, setEditingChildId] = useState(null);
 
-  // Fetch children and employees on component mount
+  // State for editing child ID
+  const [editingChildId, setEditingChildId] = useState(null);
+  const [editedChild, setEditedChild] = useState({});
+
+
+  // Fetch children on component mount
   useEffect(() => {
     fetchChildren();
   }, []);
 
-  // Fetch functions
+
+  // Fetch children data
   const fetchChildren = async () => {
-    try {
-      const result = await axios.get(
-        "http://localhost:5000/childrenAPI/children_table"
-      );
-      setChildren(result.data);
-    } catch (error) {
-      console.error("Error fetching children:", error);
-      // Removed the alert
-    }
-  };
-  // Add and update functions
-  const addOrUpdateChild = async () => {
-    try {
-      if (editingChildId) {
-        // Update child
-
-        await axios.put(
-          `http://localhost:5000/childrenAPI/children_table/${editingChildId}`,
-          newChild
-        );
-      } else {
-        if (!newChild.childrenFirstName) return;
-        await axios.post(
-          "http://localhost:5000/childrenAPI/children_table",
-          newChild
-        );
-      }
-      setEditingChildId(null);
-      fetchChildren();
-      resetNewChild();
-    } catch (error) {
-      console.error("Failed to add or update child:", error);
-      // Removed the alert
-    }
+    const response = await axios.get(
+      'http://localhost:5000/childrenAPI/children_table'
+    );
+    setChildren(response.data);
   };
 
-  // Delete functions
+
+  // Add new child
+  const addChild = async () => {
+    await axios.post(
+      'http://localhost:5000/childrenAPI/children_table',
+      newChild
+    );
+    resetNewChild();
+    fetchChildren();
+  };
+
+
+  // Update child
+  const updateChild = async (id) => {
+    await axios.put(
+      `http://localhost:5000/childrenAPI/children_table/${id}`,
+      editedChild
+    );
+    setEditingChildId(null);
+    fetchChildren();
+  };
+
+
+  // Delete child
   const deleteChild = async (id) => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/childrenAPI/children_table/${id}`
-      );
-      fetchChildren();
-    } catch (error) {
-      console.error("Error deleting child:", error);
-      // Removed the alert
-    }
+    await axios.delete(
+      `http://localhost:5000/childrenAPI/children_table/${id}`
+    );
+    fetchChildren();
   };
 
-  // Reset form inputs
+
+  // Reset new child form
   const resetNewChild = () => {
     setNewChild({
-      childrenFirstName: "",
-      childrenMiddleName: "",
-      childrenLastName: "",
-      childrenNameExtension: "",
-      dateOfBirth: "",
-      person_id: "",
+      childrenFirstName: '',
+      childrenMiddleName: '',
+      childrenLastName: '',
+      childrenNameExtension: '',
+      dateOfBirth: '',
+      person_id: '',
     });
   };
 
-  const [file, setFile] = useState(null);
-  const [message, setMessage] = useState("");
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleFileUpload = async () => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/childrenAPI/upload_children_table",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      fetchChildren();
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      setMessage("File upload failed");
-    }
-  };
-
-  // const resetNewEmployee = () => {
-  //   setNewEmployee({ person_id: '' });
-  // };
-
-  // JSX for the dashboard
   return (
     <Container>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h1 style={{ width: "90%" }}>Children Information</h1>
-        <input type="file" onChange={handleFileChange} />
-        <button
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "green",
-            border: "none",
-            color: "white",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-          onClick={handleFileUpload}
-        >
-          UPLOAD
-        </button>
-      </div>
-      {/* Children Section */}
+      <Typography variant="h4" gutterBottom>
+        Children Information
+      </Typography>
 
-      <Box display="flex" alignItems="center" sx={{ marginBottom: 3 }}>
-        <TextField
-          label="First Name"
-          value={newChild.childrenFirstName || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, childrenFirstName: e.target.value })
-          }
-        />
-        <TextField
-          label="Middle Name"
-          value={newChild.childrenMiddleName || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, childrenMiddleName: e.target.value })
-          }
-        />
-        <TextField
-          label="Last Name"
-          value={newChild.childrenLastName || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, childrenLastName: e.target.value })
-          }
-        />
-        <TextField
-          label="Name Extension"
-          value={newChild.childrenNameExtension || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, childrenNameExtension: e.target.value })
-          }
-        />
-        <TextField
-          type="date"
-          label="Date Of Birth"
-          InputLabelProps={{ shrink: true }}
-          value={newChild.dateOfBirth || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, dateOfBirth: e.target.value })
-          }
-        />
-        <TextField
-          label="Person ID"
-          value={newChild.person_id || ""}
-          sx={{ marginRight: 2 }}
-          onChange={(e) =>
-            setNewChild({ ...newChild, person_id: e.target.value })
-          }
-        />
-        <Button
-          onClick={addOrUpdateChild}
-          variant="contained"
-          color="primary"
-          sx={{ marginRight: 1 }}
-        >
-          {editingChildId ? "Update" : "Add"}
-        </Button>
-      </Box>
 
+      {/* Add New Child */}
+      <Paper elevation={2} style={{ padding: '16px', marginBottom: '24px' }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="First Name"
+              value={newChild.childrenFirstName}
+              onChange={(e) =>
+                setNewChild({ ...newChild, childrenFirstName: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Middle Name"
+              value={newChild.childrenMiddleName}
+              onChange={(e) =>
+                setNewChild({ ...newChild, childrenMiddleName: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Last Name"
+              value={newChild.childrenLastName}
+              onChange={(e) =>
+                setNewChild({ ...newChild, childrenLastName: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Name Extension"
+              value={newChild.childrenNameExtension}
+              onChange={(e) =>
+                setNewChild({
+                  ...newChild,
+                  childrenNameExtension: e.target.value,
+                })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="date"
+              label="Date Of Birth"
+              InputLabelProps={{ shrink: true }}
+              value={newChild.dateOfBirth}
+              onChange={(e) =>
+                setNewChild({ ...newChild, dateOfBirth: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Person ID"
+              value={newChild.person_id}
+              onChange={(e) =>
+                setNewChild({ ...newChild, person_id: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              onClick={addChild}
+              variant="contained"
+              startIcon={<AddIcon />}
+              style={{ backgroundColor: '#6c0b19' }} // Set the button color
+            >
+              Add Child
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+
+
+      {/* Children Table */}
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ textAlign: "center" }}>ID</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>First Name</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Middle Name</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Last Name</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Name Extension</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Date of Birth</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Person ID</TableCell>
-            <TableCell sx={{ textAlign: "center" }}>Actions</TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell>First Name</TableCell>
+            <TableCell>Middle Name</TableCell>
+            <TableCell>Last Name</TableCell>
+            <TableCell>Name Extension</TableCell>
+            <TableCell>Date of Birth</TableCell>
+            <TableCell>Person ID</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
           {children.map((child) => (
             <TableRow key={child.id}>
-              <TableCell sx={{ textAlign: "center" }}>{child.id}</TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.childrenFirstName}
+              <TableCell>{child.id}</TableCell>
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    value={
+                      editedChild.childrenFirstName || child.childrenFirstName
+                    }
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        childrenFirstName: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.childrenFirstName
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.childrenMiddleName}
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    value={
+                      editedChild.childrenMiddleName || child.childrenMiddleName
+                    }
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        childrenMiddleName: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.childrenMiddleName
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.childrenLastName}
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    value={
+                      editedChild.childrenLastName || child.childrenLastName
+                    }
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        childrenLastName: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.childrenLastName
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.childrenNameExtension}
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    value={
+                      editedChild.childrenNameExtension ||
+                      child.childrenNameExtension
+                    }
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        childrenNameExtension: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.childrenNameExtension
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.dateOfBirth}
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    type="date"
+                    value={editedChild.dateOfBirth || child.dateOfBirth}
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        dateOfBirth: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.dateOfBirth
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                {child.person_id}
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <TextField
+                    value={editedChild.person_id || child.person_id}
+                    onChange={(e) =>
+                      setEditedChild({
+                        ...editedChild,
+                        person_id: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  child.person_id
+                )}
               </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                <Button
-                  onClick={() => {
-                    setNewChild(child);
-                    setEditingChildId(child.id);
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button onClick={() => deleteChild(child.id)}>Delete</Button>
+              <TableCell>
+                {editingChildId === child.id ? (
+                  <>
+                    <Button
+                      onClick={() => updateChild(child.id)}
+                      variant="contained"
+                      color="primary"
+                      startIcon={<SaveIcon />}
+                      style={{ width: '100px', backgroundColor: '#6c0b19' }} // Set a fixed width
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      onClick={() => setEditingChildId(null)}
+                      variant="outlined"
+                      color="error"
+                      style={{
+                        width: '100px',
+                        marginTop: '5px',
+                        color: 'white',
+                        backgroundColor: '#000000',
+                      }} // Set the same fixed width
+                      startIcon={<CancelIcon />}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setEditingChildId(child.id);
+                        setEditedChild(child); // Set the current child data for editing
+                      }}
+                      variant="contained"
+                      color="primary"
+                      startIcon={<EditIcon />}
+                      style={{ width: '100px', backgroundColor: '#6c0b19' }} // Set a fixed width
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => deleteChild(child.id)}
+                      variant="outlined"
+                      color="error"
+                      style={{
+                        width: '100px',
+                        margin: 'auto',
+                        marginLeft: '2px',
+                        color: 'white',
+                        backgroundColor: '#000000',
+                      }} // Set the same fixed width
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
               </TableCell>
             </TableRow>
           ))}
@@ -267,4 +374,10 @@ const ChildrenInfo = () => {
   );
 };
 
+
 export default ChildrenInfo;
+
+
+
+
+

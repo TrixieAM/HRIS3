@@ -97,6 +97,7 @@ const ViewAttendanceRecord = () => {
 
   return (
     <div style={{ padding: "16px" }}>
+       <h2>Attendance Record</h2>
       {personName && (
         <Typography variant="h4" gutterBottom>
           Device Record for {personName}

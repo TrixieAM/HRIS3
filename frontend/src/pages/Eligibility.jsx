@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   Button,
   Table,
@@ -13,36 +13,46 @@ import {
   Grid,
   Paper,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 
 const Eligibility = () => {
   const [data, setData] = useState([]); // To hold eligibility data
   const [newEligibility, setNewEligibility] = useState({
-    eligibilityName: "",
-    eligibilityRating: "",
-    eligibilityDateOfExam: "",
-    eligibilityPlaceOfExam: "",
-    licenseNumber: "",
-    DateOfValidity: "",
-    person_id: ""
+    eligibilityName: '',
+    eligibilityRating: '',
+    eligibilityDateOfExam: '',
+    eligibilityPlaceOfExam: '',
+    licenseNumber: '',
+    DateOfValidity: '',
+    person_id: '',
   }); // To hold input for new eligibility
   const [editEligibility, setEditEligibility] = useState(null); // To hold eligibility being edited
+
 
   // Fetch all eligibility records on component mount
   useEffect(() => {
     fetchEligibility();
   }, []);
 
+
   const fetchEligibility = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/eligibilityRoute/eligibility"
+        'http://localhost:5000/eligibilityRoute/eligibility'
       );
       setData(response.data);
     } catch (error) {
-      console.error("Error fetching eligibility:", error);
+      console.error('Error fetching eligibility:', error);
     }
   };
+
 
   // Add new eligibility
   const addEligibility = async () => {
@@ -56,28 +66,29 @@ const Eligibility = () => {
         !newEligibility.DateOfValidity ||
         !newEligibility.person_id
       ) {
-        alert("All field are required");
+        alert('All field are required');
         return;
       } else {
         await axios.post(
-          "http://localhost:5000/eligibilityRoute/eligibility",
+          'http://localhost:5000/eligibilityRoute/eligibility',
           newEligibility
         );
       }
       setNewEligibility({
-        eligibilityName: "",
-        eligibilityRating: "",
-        eligibilityDateOfExam: "",
-        eligibilityPlaceOfExam: "",
-        licenseNumber: "",
-        DateOfValidity: "",
-        person_id: "",
-      }); 
+        eligibilityName: '',
+        eligibilityRating: '',
+        eligibilityDateOfExam: '',
+        eligibilityPlaceOfExam: '',
+        licenseNumber: '',
+        DateOfValidity: '',
+        person_id: '',
+      });
       fetchEligibility();
     } catch (error) {
-      console.error("Error adding eligibility:", error);
+      console.error('Error adding eligibility:', error);
     }
   };
+
 
   // Update eligibility
   const updateEligibility = async () => {
@@ -90,7 +101,7 @@ const Eligibility = () => {
       setEditEligibility(null); // Clear edit mode after saving
       fetchEligibility(); // Refresh the data
     } catch (error) {
-      console.error("Error updating eligibility:", error);
+      console.error('Error updating eligibility:', error);
     }
   };
   // Delete eligibility
@@ -101,56 +112,62 @@ const Eligibility = () => {
       );
       fetchEligibility();
     } catch (error) {
-      console.error("Error deleting eligibility:", error);
+      console.error('Error deleting eligibility:', error);
     }
   };
 
+
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+
   const handleFileUpload = async () => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
+
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/eligibilityRoute/upload_eligibility",
+        'http://localhost:5000/eligibilityRoute/upload_eligibility',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
       fetchEligibility();
     } catch (error) {
-      console.error("Error uploading file:", error);
-      setMessage("File upload failed");
+      console.error('Error uploading file:', error);
+      setMessage('File upload failed');
     }
   };
+
 
   return (
     <Container>
       <Typography
         variant="h4"
         gutterBottom
-        style={{ fontWeight: "bold", marginTop: "20px" }}
+        style={{ fontWeight: 'bold', marginTop: '20px' }}
       >
         Eligibility
       </Typography>
 
+
       {/* Add New Eligibility */}
-      <Paper elevation={3} style={{ padding: "16px", marginBottom: "20px" }}>
+      <Paper elevation={3} style={{ padding: '16px', marginBottom: '20px' }}>
         <Grid container spacing={2}>
           {Object.keys(newEligibility).map((key) => (
             <Grid item xs={12} sm={6} md={4} key={key}>
               <TextField
                 label={key
-                  .replace(/([A-Z])/g, " $1")
+                  .replace(/([A-Z])/g, ' $1')
                   .replace(/^./, (str) => str.toUpperCase())}
                 value={newEligibility[key]}
                 onChange={(e) =>
@@ -159,8 +176,8 @@ const Eligibility = () => {
                     [key]: e.target.value,
                   })
                 }
-                type={key.includes("Date") ? "date" : "text"}
-                InputLabelProps={key.includes("Date") ? { shrink: true } : {}}
+                type={key.includes('Date') ? 'date' : 'text'}
+                InputLabelProps={key.includes('Date') ? { shrink: true } : {}}
                 fullWidth
               />
             </Grid>
@@ -168,42 +185,50 @@ const Eligibility = () => {
           <Grid
             item
             xs={12}
-            sx={{ display: "flex", alignItems: "center", position: "relative" }}
+            sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}
           >
             <Box>
               <Button
                 onClick={addEligibility}
                 variant="contained"
                 color="primary"
-                sx={{ margin: 2 }}
+                sx={{
+                  marginRight: 1,
+                  backgroundColor: '#6c0b19',
+                  width: '100px',
+                }}
+                startIcon={<AddIcon />}
               >
                 Add
               </Button>
               <Button
                 style={{
-                  padding: "10px 20px",
-                  height: "37px",
-                  fontSize: "14px",
-                  backgroundColor: "green",
-                  border: "none",
-                  color: "white",
-                  borderRadius: "5px",
-                  cursor: "pointer",
+                  padding: '10px 20px',
+                  height: '37px',
+                  fontSize: '14px',
+                  backgroundColor: 'green',
+                  border: 'none',
+                  color: 'white',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  backgroundColor: '#6c0b19',
                 }}
+                startIcon={<UploadIcon />}
                 onClick={handleFileUpload}
               >
                 UPLOAD
               </Button>
             </Box>
-            <Box sx={{ position: "absolute", right: "0", marginRight: "-7%" }}>
+            <Box sx={{ position: 'absolute', right: '0', marginRight: '-7%' }}>
               <input type="file" onChange={handleFileChange} />
             </Box>
           </Grid>
         </Grid>
       </Paper>
 
+
       {/* Eligibility Table */}
-      <Paper elevation={3} style={{ padding: "16px" }}>
+      <Paper elevation={3} style={{ padding: '16px' }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -235,9 +260,9 @@ const Eligibility = () => {
                               [key]: e.target.value,
                             })
                           }
-                          type={key.includes("Date") ? "date" : "text"}
+                          type={key.includes('Date') ? 'date' : 'text'}
                           InputLabelProps={
-                            key.includes("Date") ? { shrink: true } : {}
+                            key.includes('Date') ? { shrink: true } : {}
                           }
                           fullWidth
                         />
@@ -253,6 +278,12 @@ const Eligibility = () => {
                         onClick={updateEligibility}
                         variant="contained"
                         color="primary"
+                        sx={{
+                          width: '100px',
+                          backgroundColor: '#6c0b19',
+                          color: 'white',
+                        }}
+                        startIcon={<SaveIcon />}
                       >
                         Save
                       </Button>
@@ -260,7 +291,13 @@ const Eligibility = () => {
                         onClick={() => setEditEligibility(null)}
                         variant="outlined"
                         color="secondary"
-                        style={{ marginLeft: "10px" }}
+                        sx={{
+                          width: '100px',
+                          color: 'white',
+                          backgroundColor: '#000000',
+                          marginTop: '5px',
+                        }}
+                        startIcon={<CancelIcon />}
                       >
                         Cancel
                       </Button>
@@ -271,17 +308,25 @@ const Eligibility = () => {
                         onClick={() => setEditEligibility(eligibility)}
                         variant="contained"
                         color="primary"
+                        sx={{
+                          marginRight: 2,
+                          width: '100px',
+                          backgroundColor: '#6c0b19',
+                          color: 'white',
+                        }}
+                        startIcon={<EditIcon />}
                       >
                         Edit
                       </Button>
                       <Button
                         onClick={() => deleteEligibility(eligibility.id)}
                         variant="contained"
-                        style={{
-                          backgroundColor: "#e57373",
-                          color: "white",
-                          marginLeft: "10px",
+                        sx={{
+                          width: '100px',
+                          color: 'white',
+                          backgroundColor: '#000000',
                         }}
+                        startIcon={<DeleteIcon />}
                       >
                         Delete
                       </Button>
@@ -297,4 +342,8 @@ const Eligibility = () => {
   );
 };
 
+
 export default Eligibility;
+
+
+
