@@ -61,8 +61,8 @@ const Register = () => {
                 <TextField label="Password" sx={{marginBottom: '5%', width: '100%'}}  type="password" onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
                 
                 
-                <Button type="submit" sx={{width: '100%'}}>Register</Button>
-                <p>Already have an account? <Link href="/">Sign In</Link></p>
+                <Button type="submit" variant='contained' sx={{width: '100%', bgcolor: '#6c0b19'}}>Register</Button>
+                <h5>Already have an account? <Link href="/">Sign In</Link></h5>
             </form>
         </Container>
     );

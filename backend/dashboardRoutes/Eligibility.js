@@ -53,7 +53,7 @@ router.post("/upload_eligibility", upload.single("file"), async (req, res) => {
       const formattedDateOfValidity = DateOfValidity.toISOString().split("T")[0];
       const person_id = row.person_id;
 
-      const sql = "INSERT INTO eligibility_table (eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity, person_id) VALUES (?, ?, ?, ?, ?, ?)";
+      const sql = "INSERT INTO eligibility_table (eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity, person_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
       return new Promise((resolve, reject) => {
         db.query(sql, [eligibilityName, eligibilityRating, formattedDateOfExam, eligibilityPlaceOfExam, licenseNumber, formattedDateOfValidity, person_id], (err) => {
           if (err) {
@@ -116,10 +116,10 @@ router.post("/eligibility", (req, res) => {
 
 // Update Eligibility Record
 router.put("/eligibility/:id", (req, res) => {
-  const { eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity } = req.body;
+  const { eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity, person_id } = req.body;
   const { id } = req.params;
-  const query = "UPDATE eligibility_table SET eligibilityName = ?, eligibilityRating = ?, eligibilityDateOfExam = ?, eligibilityPlaceOfExam = ?, licenseNumber = ?, DateOfValidity = ? WHERE id = ?";
-  db.query(query, [eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity, id], (err, result) => {
+  const query = "UPDATE eligibility_table SET eligibilityName = ?, eligibilityRating = ?, eligibilityDateOfExam = ?, eligibilityPlaceOfExam = ?, licenseNumber = ?, DateOfValidity = ?, person_id = ? WHERE id = ?";
+  db.query(query, [eligibilityName, eligibilityRating, eligibilityDateOfExam, eligibilityPlaceOfExam, licenseNumber, DateOfValidity, person_id, id], (err, result) => {
     if (err) {
       console.error("Error updating eligibility:", err);
       return res.status(500).send({ message: "Error updating eligibility" });

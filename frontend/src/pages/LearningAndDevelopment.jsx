@@ -27,6 +27,7 @@ const LearningAndDevelopment = () => {
   const [newItem4, setNewItem4] = useState('');
   const [newItem5, setNewItem5] = useState('');
   const [newItem6, setNewItem6] = useState('');
+  const [newItem7, setNewItem7] = useState('');
   const [editItem, setEditItem] = useState(null); // To hold item being edited
 
 
@@ -52,7 +53,8 @@ const LearningAndDevelopment = () => {
       newItem3.trim() === '' ||
       newItem4.trim() === '' ||
       newItem5.trim() === '' ||
-      newItem6.trim() === ''
+      newItem6.trim() === '' ||
+      newItem7.trim() === ''
     )
       return;
     await axios.post('http://localhost:5000/learning_and_development_table', {
@@ -62,6 +64,7 @@ const LearningAndDevelopment = () => {
       numberOfHours: newItem4,
       typeOfLearningDevelopment: newItem5,
       conductedSponsored: newItem6,
+      person_id: newItem7,
     });
     setNewItem('');
     setNewItem2('');
@@ -69,6 +72,7 @@ const LearningAndDevelopment = () => {
     setNewItem4('');
     setNewItem5('');
     setNewItem6('');
+    setNewItem7('');
     fetchItems();
   };
 
@@ -82,7 +86,8 @@ const LearningAndDevelopment = () => {
       editItem.dateTo.trim() === '' ||
       editItem.numberOfHours === '' ||
       editItem.typeOfLearningDevelopment.trim() === '' ||
-      editItem.conductedSponsored === ''
+      editItem.conductedSponsored === '' ||
+      editItem.person_id === ''
     )
       return;
     await axios.put(
@@ -94,6 +99,7 @@ const LearningAndDevelopment = () => {
         numberOfHours: editItem.numberOfHours,
         typeOfLearningDevelopment: editItem.typeOfLearningDevelopment,
         conductedSponsored: editItem.conductedSponsored,
+        person_id: editItem.person_id,
       }
     );
     setEditItem(null);
@@ -200,6 +206,12 @@ const LearningAndDevelopment = () => {
           onChange={(e) => setNewItem6(e.target.value)}
           sx={{ marginRight: 2 }}
         />
+        <TextField
+          label="Person ID"
+          value={newItem7}
+          onChange={(e) => setNewItem7(e.target.value)}
+          sx={{ marginRight: 2 }}
+        />
         <Button
           onClick={addItem}
           variant="contained"
@@ -227,6 +239,7 @@ const LearningAndDevelopment = () => {
             <TableCell sx={{ textAlign: 'center' }}>
               Conducted Sponsored
             </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Person ID</TableCell>
             <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -334,6 +347,23 @@ const LearningAndDevelopment = () => {
                   />
                 ) : (
                   item.conductedSponsored
+                )}
+              </TableCell>
+
+              <TableCell sx={{ textAlign: 'center', width: '200px' }}>
+                {/* Editable field */}
+                {editItem && editItem.id === item.id ? (
+                  <TextField
+                    value={editItem.person_id}
+                    onChange={(e) =>
+                      setEditItem({
+                        ...editItem,
+                        person_id: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  item.person_id
                 )}
               </TableCell>
 

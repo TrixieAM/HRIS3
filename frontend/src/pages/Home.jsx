@@ -42,7 +42,7 @@ const Home = () => {
 
       {isAdminOrSuperAdmin && (
         <>
-          <h1 style={{ width: '90%' }}>Dashboards</h1>
+          <h1 style={{ width: '90%' }}></h1>
           <Grid container spacing={{ xs: 3, md: 1 }} columnSpacing={{ xs: 1, sm: 2, md: 2 }} className="ImageContainer">
             {[{ img: childrenDashboardIMG, link: 'PersonalInfo' },
               { img: childrenDashboardIMG, link: 'ChildrenInfo' },

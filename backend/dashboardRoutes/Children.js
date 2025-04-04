@@ -32,9 +32,9 @@ router.post("/children_table", (req, res) => {
 
 router.put("/children_table/:id", (req, res) => {
   const { id } = req.params;
-  const { childrenFirstName, childrenMiddleName, childrenLastName, childrenNameExtension, dateOfBirth } = req.body;
-  const query = `UPDATE children_table SET childrenFirstName = ?, childrenMiddleName = ?, childrenLastName = ?, childrenNameExtension = ?, dateOfBirth = ? WHERE id = ?`;
-  db.query(query, [childrenFirstName, childrenMiddleName, childrenLastName, childrenNameExtension, dateOfBirth, id], (err) => {
+  const { childrenFirstName, childrenMiddleName, childrenLastName, childrenNameExtension, dateOfBirth, person_id } = req.body;
+  const query = `UPDATE children_table SET childrenFirstName = ?, childrenMiddleName = ?, childrenLastName = ?, childrenNameExtension = ?, dateOfBirth = ?, person_id = ? WHERE id = ?`;
+  db.query(query, [childrenFirstName, childrenMiddleName, childrenLastName, childrenNameExtension, dateOfBirth, person_id, id], (err) => {
     if (err) return res.status(500).json({ error: "Error updating child" });
     res.json({ message: "Child updated" });
   });

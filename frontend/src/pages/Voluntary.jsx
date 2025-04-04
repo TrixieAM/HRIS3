@@ -26,6 +26,7 @@ const VoluntaryWork = () => {
   const [newItem3, setNewItem3] = useState(''); // To hold input for new date to
   const [newItem4, setNewItem4] = useState(''); // To hold input for new number of hours
   const [newItem5, setNewItem5] = useState(''); // To hold input for new number of works
+  const [newItem6, setNewItem6] = useState(''); // person_id
 
 
   const [editItem, setEditItem] = useState(null); // To hold item being edited
@@ -52,7 +53,8 @@ const VoluntaryWork = () => {
       newItem2.trim() === '' ||
       newItem3.trim() === '' ||
       newItem4.trim() === '' ||
-      newItem5.trim() === ''
+      newItem5.trim() === '' ||
+      newItem6.trim() === ''
     )
       return;
     await axios.post('http://localhost:5000/voluntaryworkRoute/voluntarywork', {
@@ -61,12 +63,14 @@ const VoluntaryWork = () => {
       dateTo: newItem3,
       numberOfHours: newItem4,
       natureOfWork: newItem5,
+      person_id: newItem6,
     });
     setNewItem('');
     setNewItem2('');
     setNewItem3('');
     setNewItem4('');
     setNewItem5('');
+    setNewItem6('');
     fetchItems();
   };
 
@@ -79,7 +83,8 @@ const VoluntaryWork = () => {
       editItem.dateFrom.trim() === '' ||
       editItem.dateTo.trim() === '' ||
       String(editItem.numberOfHours).trim() === '' || // Convert to string before trimming
-      String(editItem.natureOfWork).trim() === ''
+      String(editItem.natureOfWork).trim() === '' ||
+      editItem.person_id.trim() === ''
     )
       return;
 
@@ -92,6 +97,7 @@ const VoluntaryWork = () => {
         dateTo: editItem.dateTo,
         numberOfHours: String(editItem.numberOfHours), // Ensure it's a string
         natureOfWork: String(editItem.natureOfWork),
+        person_id: editItem.person_id,
       }
     );
 
@@ -199,6 +205,12 @@ const VoluntaryWork = () => {
           sx={{ marginRight: 2 }}
           onChange={(e) => setNewItem5(e.target.value)}
         />
+        <TextField
+          label="Person ID"
+          value={newItem6}
+          sx={{ marginRight: 2 }}
+          onChange={(e) => setNewItem6(e.target.value)}
+        />
         <Button
           onClick={addItem}
           variant="contained"
@@ -221,6 +233,7 @@ const VoluntaryWork = () => {
             <TableCell>Date To</TableCell>
             <TableCell>Number of Hours</TableCell>
             <TableCell>Nature of Works</TableCell>
+            <TableCell>Person ID</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -308,6 +321,20 @@ const VoluntaryWork = () => {
                   item.natureOfWork
                 )}
               </TableCell>
+
+              <TableCell>
+                {editItem && editItem.id === item.id ? (
+                  <TextField
+                    value={String(editItem.person_id)} // Ensure value is a string
+                    onChange={(e) =>
+                      setEditItem({ ...editItem, person_id: e.target.value })
+                    }
+                  />
+                ) : (
+                  item.person_id
+                )}
+              </TableCell>
+
 
 
               <TableCell>

@@ -88,7 +88,7 @@ const Login = () => {
         justifyContent: "center",
       }}
     >
-      <form className="Form" onSubmit={handleLogin}>
+      <form className="Form" onSubmit={handleLogin} >
         <h1>Login</h1>
         {errMessage && (
           <Alert sx={{ textAlign: "center" }} severity="error">
@@ -98,12 +98,13 @@ const Login = () => {
 
         <TextField name="email" label="Email" sx={{ margin: "5% 0", width: "100%" }} autoComplete="email" onChange={handleChanges} />
         <TextField name="password" label="Password" sx={{ marginBottom: "5%", width: "100%" }} type="password" autoComplete="current-password" onChange={handleChanges} />
-        <Button type="submit" sx={{ width: "100%" }}>
+        <p><b>Forgot Password?</b></p>
+        <Button type="submit" variant="contained" sx={{ width: "100%", bgcolor: '#6c0b19'}}>
           Login
         </Button>
-        <p>
+        <h5>
           Did not have an account? <Link href="Register">Sign Up</Link>
-        </p>
+        </h5>
       </form>
     </Container>
   );

@@ -28,6 +28,7 @@ const Vocational = () => {
     vocationalPeriodTo: '',
     vocationalHighestAttained: '',
     vocationalYearGraduated: '',
+    person_id: '',
   });
   const [editVocationalId, setEditVocationalId] = useState(null); // Store only the ID of the record being edited
 
@@ -52,7 +53,8 @@ const Vocational = () => {
       !newVocational.vocationalNameOfSchool ||
       !newVocational.vocationalPeriodFrom ||
       !newVocational.vocationalPeriodTo ||
-      !newVocational.vocationalYearGraduated
+      !newVocational.vocationalYearGraduated ||
+      !newVocational.person_id
     ) {
       console.log('All field are required');
       return;
@@ -69,6 +71,7 @@ const Vocational = () => {
       vocationalPeriodTo: '',
       vocationalHighestAttained: '',
       vocationalYearGraduated: '',
+      person_id: '',
     });
     fetchVocationalData();
   };
@@ -212,6 +215,19 @@ const Vocational = () => {
               fullWidth
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Person ID"
+              value={newVocational.person_id}
+              onChange={(e) =>
+                setNewVocational({
+                  ...newVocational,
+                  person_id: e.target.value,
+                })
+              }
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={1}>
             <Button
               onClick={addVocationalData}
@@ -263,6 +279,7 @@ const Vocational = () => {
             <TableCell>To</TableCell>
             <TableCell>Highest Attained</TableCell>
             <TableCell>Year Graduated</TableCell>
+            <TableCell>Person ID</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -403,6 +420,29 @@ const Vocational = () => {
                   />
                 ) : (
                   record.vocationalYearGraduated
+                )}
+              </TableCell>
+              <TableCell>
+                {editVocationalId === record.id ? (
+                  <TextField
+                    type="number"
+                    value={record.person_id}
+                    onChange={(e) => {
+                      const updatedRecord = {
+                        ...record,
+                        person_id: e.target.value,
+                      };
+                      setVocationalData((prevData) =>
+                        prevData.map((rec) =>
+                          rec.id === record.id ? updatedRecord : rec
+                        )
+                      );
+                    }}
+                    size="small"
+                    variant="outlined"
+                  />
+                ) : (
+                  record.person_id
                 )}
               </TableCell>
 

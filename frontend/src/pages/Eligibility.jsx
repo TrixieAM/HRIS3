@@ -239,6 +239,7 @@ const Eligibility = () => {
               <TableCell>Place of Exam</TableCell>
               <TableCell>License Number</TableCell>
               <TableCell>Date of Validity</TableCell>
+              <TableCell>Person ID</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>

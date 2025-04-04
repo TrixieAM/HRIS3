@@ -79,6 +79,7 @@ import IndividualFacultyLoading from './components/FORMS/IndividualFacultyLoadin
 import HrmsRequestForms from './components/FORMS/HRMSRequestForms';
 
 
+
 const drawerWidth = 250;
 
 
@@ -88,6 +89,7 @@ function App() {
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
   const [open4, setOpen4] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const location = useLocation();
 
 
@@ -95,6 +97,8 @@ function App() {
   const handleClickAttendance = () => setOpen2(!open2);
   const handleClickPayroll = () => setOpen3(!open3);
   const handleClickForms = () => setOpen4(!open4);
+
+  const handleItemClick = (item) => {setSelectedItem(item);};
 
 
   const fetchSettings = async () => {
@@ -168,9 +172,10 @@ function App() {
           component="main"
           sx={{
             flexGrow: 1,
-            bgcolor: '#fef9e1',
+            bgcolor: '#ffffff',
             p: 10,
             marginLeft: `${drawerWidth}px`,
+            fontFamily: 'Poppins, sans-serif',
           }}
         >
           <Toolbar />
@@ -667,7 +672,7 @@ function App() {
             height: '10px', 
           }}
         >
-          <Typography variant="body1">
+          <Typography variant="body2">
             {settings.footer_text || 'Default Footer Text'}
           </Typography>
         </Box>

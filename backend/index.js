@@ -131,9 +131,9 @@ app.get("/learning_and_development_table", (req, res) => {
 
 //Add
 app.post("/learning_and_development_table", (req, res) => {
-  const { titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored } = req.body;
-  const query = "INSERT INTO learning_and_development_table (titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(query, [titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored], (err, result) => {
+  const { titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, person_id } = req.body;
+  const query = "INSERT INTO learning_and_development_table (titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, person_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  db.query(query, [titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, person_id], (err, result) => {
     if (err) return res.status(500).send(err);
     res.status(201).send({ message: "Item created", id: result.insertId });
   });
@@ -141,10 +141,10 @@ app.post("/learning_and_development_table", (req, res) => {
 
 //Update
 app.put("/learning_and_development_table/:id", (req, res) => {
-  const { titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored } = req.body;
+  const { titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, person_id } = req.body;
   const { id } = req.params;
-  const query = "UPDATE learning_and_development_table SET titleOfProgram = ?, dateFrom = ?, dateTo = ?, numberOfHours = ?, typeOfLearningDevelopment = ?, conductedSponsored = ? WHERE id = ?";
-  db.query(query, [titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, id], (err, result) => {
+  const query = "UPDATE learning_and_development_table SET titleOfProgram = ?, dateFrom = ?, dateTo = ?, numberOfHours = ?, typeOfLearningDevelopment = ?, conductedSponsored = ?, person_id = ? WHERE id = ?";
+  db.query(query, [titleOfProgram, dateFrom, dateTo, numberOfHours, typeOfLearningDevelopment, conductedSponsored, person_id, id], (err, result) => {
     if (err) return res.status(500).send(err);
     res.status(200).send({ message: "Item updated" });
   });

@@ -40,10 +40,11 @@ router.post("/upload_vocational", uploads.single("file"), async (req, res) => {
       const vocationalPeriodTo = row.vocationalPeriodTo;
       const vocationalHighestAttained = row.vocationalHighestAttained;
       const vocationalYearGraduated = row.vocationalYearGraduated;
+      const person_id = row.person_id;
 
-      const sql = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
+      const sql = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
       return new Promise((resolve, reject) => {
-        db.query(sql, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated], (err) => {
+        db.query(sql, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id], (err) => {
           if (err) {
             console.error("Error inserting data:", err);
             return reject(err);
@@ -92,9 +93,9 @@ router.get("/vocational_table", (req, res) => {
 });
 
 router.post("/vocational_table", (req, res) => {
-  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated } = req.body;
-  const query = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated], (err, result) => {
+  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id } = req.body;
+  const query = "INSERT INTO vocational_table (vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id], (err, result) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).send("Internal Server Error");
@@ -105,9 +106,9 @@ router.post("/vocational_table", (req, res) => {
 
 router.put("/vocational_table/:id", (req, res) => {
   const { id } = req.params;
-  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated } = req.body;
-  const query = "UPDATE vocational_table SET vocationalNameOfSchool = ?, vocationalDegree = ?, vocationalPeriodFrom = ?, vocationalPeriodTo = ?, vocationalHighestAttained = ?, vocationalYearGraduated = ? WHERE id = ?";
-  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, id], (err, result) => {
+  const { vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id} = req.body;
+  const query = "UPDATE vocational_table SET vocationalNameOfSchool = ?, vocationalDegree = ?, vocationalPeriodFrom = ?, vocationalPeriodTo = ?, vocationalHighestAttained = ?, vocationalYearGraduated = ?, person_id = ? WHERE id = ?";
+  db.query(query, [vocationalNameOfSchool, vocationalDegree, vocationalPeriodFrom, vocationalPeriodTo, vocationalHighestAttained, vocationalYearGraduated, person_id, id], (err, result) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).send("Internal Server Error");

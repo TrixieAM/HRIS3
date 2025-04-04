@@ -17,7 +17,7 @@ const HrmsRequestForms = () => {
         padding:'0.125in',
         width:'8.25in',
         height:'8.50in',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: 'Poppins, sans-serif',
         margin: 'auto',
         marginBottom: '0.30in',
 
@@ -144,7 +144,7 @@ const HrmsRequestForms = () => {
         padding:'0.125in',
         width:'8.25in',
         height:'8.50in',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: 'Poppins, sans-serif',
         margin: 'auto',
         marginBottom: '0.30in',
 

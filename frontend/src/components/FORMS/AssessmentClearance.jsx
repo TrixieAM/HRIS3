@@ -9,7 +9,7 @@ const AssesmentClearance = () => {
         border: "1px solid black",
         padding: "0.25in",
         width: "8in",
-        fontFamily: "Arial, Helvetica, sans-serif",
+        fontFamily: "Poppins, sans-serif",
         alignContent:'center',
         margin: 'auto',
         marginTop: '50px'
